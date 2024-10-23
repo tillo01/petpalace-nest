@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Member, Members } from '../../libs/dto/member/member';
@@ -15,6 +15,10 @@ import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeService } from '../like/like.service';
 import { Follower, Following, MeFollowed } from '../../libs/dto/follow/follow';
+import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
+import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
+import { Notify } from '../../libs/dto/notifyme/notifyme';
 
 @Injectable()
 export class MemberService {
@@ -26,6 +30,7 @@ export class MemberService {
 		private authService: AuthService,
 		private viewService: ViewService,
 		private likeService: LikeService,
+		@Inject(forwardRef(() => NotificationService)) private notificationService: NotificationService,
 	) {}
 	public async signup(input: MemberInput): Promise<Member> {
 		input.memberPassword = await this.authService.hashPassword(input.memberPassword);
@@ -92,7 +97,11 @@ export class MemberService {
 		}
 
 		// me liked
-		const LikeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
+		const LikeInput = {
+			memberId: memberId,
+			likeRefId: targetId,
+			likeGroup: LikeGroup.MEMBER,
+		};
 		targetMember.meLiked = await this.likeService.checlLikeExistence(LikeInput);
 		// mew followed
 		targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
@@ -175,8 +184,21 @@ export class MemberService {
 			likeRefId: likeRefId,
 			likeGroup: LikeGroup.MEMBER,
 		};
+		const inputNotif: NotifyMeInput = {
+			authorId: memberId,
+			receiverId: likeRefId,
+			notificationGroup: NotificationGroup.MEMBER,
+			notificationType: NotificationType.LIKE,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationTitle: 'Hi',
+			notificationDesc: 'hi',
+		};
+
 		// LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
+		console.log('Before createNotification=>>>>>>>>>>');
+		await this.notificationService.createNotification(inputNotif);
+
 		const result = await this.memberStatsEditor({ _id: likeRefId, targetKey: 'memberLikes', modifier: modifier });
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;

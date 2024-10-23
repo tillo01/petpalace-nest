@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty } from 'class-validator';
 import { ObjectId } from 'mongoose';
 import { LikeGroup } from '../../enums/like.enum';
+import { NotificationStatus } from '../../enums/notification.enum';
 
 @InputType()
 export class LikeInput {

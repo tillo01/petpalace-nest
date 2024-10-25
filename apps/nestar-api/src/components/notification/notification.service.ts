@@ -8,6 +8,7 @@ import { Direction, Message } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
 import { lookupAuthMemberLiked, lookupMember } from '../../libs/config';
 import { NotificationStatus } from '../../libs/enums/notification.enum';
+import { NotifUpdate } from '../../libs/dto/notifyme/notifyme.update';
 
 @Injectable()
 export class NotificationService {
@@ -41,5 +42,20 @@ export class NotificationService {
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		return result[0];
+	}
+
+	public async updateNotifications(input: NotifUpdate): Promise<Notify> {
+		const { _id, notificationStatus } = input;
+		const result = await this.notificationModel.findOneAndUpdate(
+			{ _id }, // Correct filter using _id
+			{ notificationStatus: notificationStatus || NotificationStatus.WAIT }, // Update field
+			{ new: true }, // Return the updated document
+		);
+		if (!result) {
+			throw new InternalServerErrorException(Message.UPDATE_FAILED);
+		}
+		console.log('resultt', result);
+
+		return result;
 	}
 }

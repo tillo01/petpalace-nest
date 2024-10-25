@@ -19,6 +19,7 @@ import { NotificationGroup, NotificationStatus, NotificationType } from '../../l
 import { NotificationService } from '../notification/notification.service';
 import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
 import { Notify } from '../../libs/dto/notifyme/notifyme';
+import { lookupAuthMemberLiked, lookupMember } from '../../libs/config';
 
 @Injectable()
 export class MemberService {
@@ -127,7 +128,12 @@ export class MemberService {
 				{ $sort: sort },
 				{
 					$facet: {
-						list: [{ $skip: (input.page - 1) * input.limit }, { $limit: input.limit }],
+						list: [
+							{ $skip: (input.page - 1) * input.limit },
+							{ $limit: input.limit },
+							lookupAuthMemberLiked(memberId),
+							lookupMember,
+						],
 						metaCounter: [{ $count: 'total' }],
 					},
 				},
@@ -184,22 +190,29 @@ export class MemberService {
 			likeRefId: likeRefId,
 			likeGroup: LikeGroup.MEMBER,
 		};
-		const inputNotif: NotifyMeInput = {
-			authorId: memberId,
-			receiverId: likeRefId,
-			notificationGroup: NotificationGroup.MEMBER,
-			notificationType: NotificationType.LIKE,
-			notificationStatus: NotificationStatus.WAIT,
-			notificationTitle: 'Hi',
-			notificationDesc: 'hi',
-		};
 
 		// LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
 		console.log('Before createNotification=>>>>>>>>>>');
+
+		const inputNotif: NotifyMeInput = {
+			authorId: memberId,
+			receiverId: likeRefId,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationDesc: 'New Like',
+			notificationGroup: NotificationGroup.MEMBER,
+			notificationType: NotificationType.LIKE,
+			notificationTitle: 'Got new likes',
+			articleId: null,
+			propertyId: null,
+		};
 		await this.notificationService.createNotification(inputNotif);
 
-		const result = await this.memberStatsEditor({ _id: likeRefId, targetKey: 'memberLikes', modifier: modifier });
+		const result = await this.memberStatsEditor({
+			_id: likeRefId,
+			targetKey: 'memberLikes',
+			modifier: modifier,
+		});
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;
 	}

@@ -92,6 +92,10 @@ const MemberSchema = new Schema(
 			type: Number,
 			default: 0,
 		},
+		memberNotificationCount: {
+			type: Number,
+			default: 0,
+		},
 
 		deletedAt: {
 			type: Date,

@@ -25,6 +25,10 @@ const NotificationSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		notificationCount: {
+			type: Number,
+			default: 0,
+		},
 
 		notificationDesc: {
 			type: String,

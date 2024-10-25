@@ -19,6 +19,7 @@ import NotificationSchema from '../../schemas/Notification.model';
 		ViewModule,
 		LikeModule,
 		forwardRef(() => NotificationModule),
+		forwardRef(() => LikeModule),
 	],
 
 	providers: [MemberResolver, MemberService],

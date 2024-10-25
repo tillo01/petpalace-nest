@@ -4,6 +4,8 @@ import NotificationSchema from '../../schemas/Notification.model';
 import { NotificationService } from './notification.service';
 import { MemberModule } from '../member/member.module';
 import { NotificationResolver } from './notification.resolver';
+import { LikeModule } from '../like/like.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
 	imports: [
@@ -14,6 +16,7 @@ import { NotificationResolver } from './notification.resolver';
 			},
 		]),
 		forwardRef(() => MemberModule),
+		AuthModule,
 	],
 	providers: [NotificationService, NotificationResolver],
 	exports: [NotificationService],

@@ -18,6 +18,9 @@ import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeService } from '../like/like.service';
+import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
+import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class BoardArticleService {
@@ -26,6 +29,7 @@ export class BoardArticleService {
 		private readonly memberService: MemberService,
 		private readonly viewService: ViewService,
 		private readonly likeService: LikeService,
+		private readonly notificationService: NotificationService,
 	) {}
 
 	public async createBoardArticle(memberId: ObjectId, input: BoardArticleInput): Promise<BoardArticle> {
@@ -222,6 +226,19 @@ export class BoardArticleService {
 		};
 		// LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
+
+		const inputNotif: NotifyMeInput = {
+			authorId: memberId,
+			receiverId: memberId,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationDesc: 'New Like',
+			notificationGroup: NotificationGroup.ARTICLE,
+			notificationType: NotificationType.LIKE,
+			notificationTitle: 'Got new likes',
+			articleId: likeRefId,
+			propertyId: null,
+		};
+		await this.notificationService.createNotification(inputNotif);
 		const result = await this.boardArticleStatsEditor({
 			_id: likeRefId,
 			targetKey: 'articleLikes',

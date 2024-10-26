@@ -40,3 +40,9 @@ export class Notify {
 	@Field(() => Date)
 	updatedAt: Date;
 }
+
+@ObjectType()
+export class Notifies {
+	@Field(() => [Notify])
+	list: Notify[];
+}

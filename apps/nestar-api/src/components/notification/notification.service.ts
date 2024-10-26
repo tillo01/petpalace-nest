@@ -1,7 +1,7 @@
 import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { Notify } from '../../libs/dto/notifyme/notifyme';
+import { Notifies, Notify } from '../../libs/dto/notifyme/notifyme';
 import { NotifInquiry, NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
 import { MemberService } from '../member/member.service';
 import { Direction, Message } from '../../libs/enums/common.enum';
@@ -30,7 +30,7 @@ export class NotificationService {
 		}
 	}
 
-	public async getNotifications(receiverId: ObjectId, input: NotifInquiry): Promise<Notify[]> {
+	public async getNotifications(receiverId: ObjectId, input: NotifInquiry): Promise<Notifies> {
 		const match: T = {
 			receiverId: receiverId,
 		};
@@ -40,6 +40,7 @@ export class NotificationService {
 		console.log('result=>>>', result);
 
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		console.log('result=>>>', typeof result);
 
 		return result[0];
 	}
@@ -47,9 +48,9 @@ export class NotificationService {
 	public async updateNotifications(input: NotifUpdate): Promise<Notify> {
 		const { _id, notificationStatus } = input;
 		const result = await this.notificationModel.findOneAndUpdate(
-			{ _id }, // Correct filter using _id
-			{ notificationStatus: notificationStatus || NotificationStatus.WAIT }, // Update field
-			{ new: true }, // Return the updated document
+			{ _id },
+			{ notificationStatus: notificationStatus || NotificationStatus.WAIT },
+			{ new: true },
 		);
 		if (!result) {
 			throw new InternalServerErrorException(Message.UPDATE_FAILED);

@@ -4,7 +4,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Notify } from '../../libs/dto/notifyme/notifyme';
+import { Notifies, Notify } from '../../libs/dto/notifyme/notifyme';
 import { NotifInquiry } from '../../libs/dto/notifyme/notifyme.input';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
@@ -21,7 +21,7 @@ export class NotificationResolver {
 	public async getNotifications(
 		@Args('input') input: NotifInquiry,
 		@AuthMember('_id') receiverId: ObjectId,
-	): Promise<Notify[]> {
+	): Promise<Notifies> {
 		console.log('Query: getNotifications');
 
 		return await this.notificationService.getNotifications(receiverId, input);

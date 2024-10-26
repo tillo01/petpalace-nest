@@ -22,6 +22,9 @@ import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../
 import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
+import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
+import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class PropertyService {
@@ -30,6 +33,7 @@ export class PropertyService {
 		private memberService: MemberService,
 		private viewService: ViewService,
 		private likeService: LikeService,
+		private notificationService: NotificationService,
 	) {}
 
 	public async createProperty(input: PropertyInput): Promise<Property> {
@@ -294,6 +298,20 @@ export class PropertyService {
 		};
 		// LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
+
+		const inputNotif: NotifyMeInput = {
+			authorId: memberId,
+			receiverId: memberId,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationDesc: 'New Like',
+			notificationGroup: NotificationGroup.PROPERTY,
+			notificationType: NotificationType.LIKE,
+			notificationTitle: 'Got new likes',
+			articleId: null,
+			propertyId: likeRefId,
+		};
+		await this.notificationService.createNotification(inputNotif);
+
 		const result = await this.propertyStatsEditor({ _id: likeRefId, targetKey: 'propertyLikes', modifier: modifier });
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;

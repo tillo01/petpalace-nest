@@ -68,20 +68,3 @@ export class NotifInquiry {
 	@Field(() => Direction)
 	direction?: Direction;
 }
-
-// @IsNotEmpty()
-// @Field(() => Int)
-// notificationCount: Number;
-
-// @IsNotEmpty()
-// 	@Field(() => NotificationType)
-// 	notificationType: NotificationType;
-
-// @IsNotEmpty()
-// @Field(() => NotificationGroup)
-// notificationGroup: NotificationGroup;
-
-// @IsOptional()
-// 	@Length(1, 30)
-// 	@Field(() => String, { nullable: true })
-// 	notificationDesc: String;

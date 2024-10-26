@@ -32,6 +32,10 @@ export class NotifyMeInput {
 	propertyTitle?: string;
 
 	@IsNotEmpty()
+	@Field(() => String, { nullable: true })
+	articleTitle?: string;
+
+	@IsNotEmpty()
 	@Field(() => NotificationType)
 	notificationType: NotificationType;
 

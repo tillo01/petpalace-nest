@@ -36,6 +36,9 @@ const NotificationSchema = new Schema(
 		propertyTitle: {
 			type: String,
 		},
+		articleTitle: {
+			type: String,
+		},
 
 		authorId: {
 			type: Schema.Types.ObjectId,

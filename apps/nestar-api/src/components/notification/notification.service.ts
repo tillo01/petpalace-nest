@@ -63,6 +63,15 @@ export class NotificationService {
 					},
 				},
 				{ $unwind: { path: '$propertyData', preserveNullAndEmptyArrays: true } },
+				{
+					$lookup: {
+						from: 'boardArticles',
+						localField: 'articleId',
+						foreignField: '_id',
+						as: 'articleData',
+					},
+				},
+				{ $unwind: { path: '$articleData', preserveNullAndEmptyArrays: true } },
 
 				{
 					$facet: {
@@ -77,6 +86,7 @@ export class NotificationService {
 			...ele,
 			authorNick: ele.memberData.memberNick,
 			propertyTitle: ele.propertyTitle,
+			artticleTitle: ele.articleTitle,
 		}));
 
 		return result;

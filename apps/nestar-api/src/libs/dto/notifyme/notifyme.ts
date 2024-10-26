@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
 import { NotificationGroup, NotificationStatus, NotificationType } from '../../enums/notification.enum';
+import { Transform } from 'class-transformer';
+import { IsString } from 'class-validator';
 
 @ObjectType()
 export class Notify {
@@ -24,6 +26,11 @@ export class Notify {
 
 	@Field(() => String, { nullable: true })
 	propertyTitle?: string;
+
+	@Field(() => String, { nullable: true })
+	@IsString()
+	@Transform(({ value }) => `**${value}**`)
+	articleTitle?: string;
 
 	@Field(() => NotificationType)
 	notificationType: NotificationType;

@@ -240,8 +240,9 @@ export class BoardArticleService {
 
 		const inputNotif: NotifyMeInput = {
 			authorId: memberId,
-			receiverId: memberId,
-			authorNick: author.memberNick,
+			receiverId: target.memberId,
+			authorNick: `**${author.memberNick}**`,
+			articleTitle: target.articleTitle,
 			notificationStatus: NotificationStatus.WAIT,
 			notificationDesc: 'New Like',
 			notificationGroup: NotificationGroup.ARTICLE,

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Direction, Message } from '../../libs/enums/common.enum';
@@ -25,12 +25,15 @@ import { LikeGroup } from '../../libs/enums/like.enum';
 import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
 import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
 import { NotificationService } from '../notification/notification.service';
+import { Member } from '../../libs/dto/member/member';
+import { MemberStatus } from '../../libs/enums/member.enum';
 
 @Injectable()
 export class PropertyService {
 	constructor(
 		@InjectModel('Property') private readonly propertyModel: Model<Property>,
-		private memberService: MemberService,
+		@InjectModel('Member') private readonly memberModel: Model<Member>,
+		@Inject(forwardRef(() => MemberService)) private memberService: MemberService,
 		private viewService: ViewService,
 		private likeService: LikeService,
 		private notificationService: NotificationService,
@@ -291,6 +294,14 @@ export class PropertyService {
 			.findOne({ _id: likeRefId, propertyStatus: PropertyStatus.ACTIVE })
 			.exec();
 		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		const author: Member = await this.memberModel
+			.findOne({
+				_id: memberId,
+				memberStatus: MemberStatus.ACTIVE,
+			})
+			.exec();
+		if (!author) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		const input: LikeInput = {
 			memberId: memberId,
 			likeRefId: likeRefId,
@@ -302,6 +313,7 @@ export class PropertyService {
 		const inputNotif: NotifyMeInput = {
 			authorId: memberId,
 			receiverId: memberId,
+			authorNick: author.memberNick,
 			notificationStatus: NotificationStatus.WAIT,
 			notificationDesc: 'New Like',
 			notificationGroup: NotificationGroup.PROPERTY,

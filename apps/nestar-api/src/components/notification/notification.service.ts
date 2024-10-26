@@ -34,15 +34,40 @@ export class NotificationService {
 		const match: T = {
 			receiverId: receiverId,
 		};
+		console.log('-----------,', receiverId);
+
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
 
-		const result = await this.notificationModel.aggregate([{ $match: match }, { $sort: sort }]).exec();
-		console.log('result=>>>', result);
+		const data = await this.notificationModel
+			.aggregate([
+				{ $match: match },
+				{ $sort: sort },
+				{
+					$lookup: {
+						from: 'members',
+						localField: 'authorId',
+						foreignField: '_id',
+						as: 'memberData',
+					},
+				},
+				{
+					$unwind: '$memberData',
+				},
+				{
+					$facet: {
+						list: [{ $limit: input.limit }],
+					},
+				},
+			])
+			.exec();
 
-		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
-		console.log('result=>>>', typeof result);
+		const result: Notifies = { list: [] };
+		result.list = data[0].list.map((ele) => ({
+			...ele,
+			authorNick: ele.memberData.memberNick,
+		}));
 
-		return result[0];
+		return result;
 	}
 
 	public async updateNotifications(input: NotifUpdate): Promise<Notify> {

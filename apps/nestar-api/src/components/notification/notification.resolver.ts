@@ -17,7 +17,7 @@ export class NotificationResolver {
 
 	@Roles(MemberType.AGENT)
 	@UseGuards(RolesGuard)
-	@Query((returns) => Notify)
+	@Query((returns) => Notifies)
 	public async getNotifications(
 		@Args('input') input: NotifInquiry,
 		@AuthMember('_id') receiverId: ObjectId,

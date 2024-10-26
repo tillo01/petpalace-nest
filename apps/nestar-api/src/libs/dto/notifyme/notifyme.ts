@@ -19,6 +19,9 @@ export class Notify {
 	@Field(() => String, { nullable: true })
 	articleId?: ObjectId;
 
+	@Field(() => String, { nullable: true })
+	authorNick?: string;
+
 	@Field(() => NotificationType)
 	notificationType: NotificationType;
 
@@ -31,7 +34,7 @@ export class Notify {
 	@Field(() => String)
 	notificationTitle: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	notificationDesc: string;
 
 	@Field(() => Date)
@@ -43,6 +46,6 @@ export class Notify {
 
 @ObjectType()
 export class Notifies {
-	@Field(() => [Notify])
+	@Field(() => [Notify], { nullable: false })
 	list: Notify[];
 }

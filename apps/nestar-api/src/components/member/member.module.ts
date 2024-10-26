@@ -9,6 +9,7 @@ import { LikeModule } from '../like/like.module';
 import FollowSchema from '../../schemas/Follow.model';
 import { NotificationModule } from '../notification/notification.module';
 import NotificationSchema from '../../schemas/Notification.model';
+import { PropertyModule } from '../property/property.module';
 
 @Module({
 	imports: [
@@ -18,11 +19,12 @@ import NotificationSchema from '../../schemas/Notification.model';
 		AuthModule,
 		ViewModule,
 		LikeModule,
+		forwardRef(() => PropertyModule),
 		forwardRef(() => NotificationModule),
 		forwardRef(() => LikeModule),
 	],
 
 	providers: [MemberResolver, MemberService],
-	exports: [MemberService],
+	exports: [MemberService, MongooseModule],
 })
 export class MemberModule {}

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PropertyResolver } from './property.resolver';
 import { PropertyService } from './property.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -14,7 +14,7 @@ import { NotificationModule } from '../notification/notification.module';
 		MongooseModule.forFeature([{ name: 'Property', schema: PropertySchema }]),
 		AuthModule,
 		ViewModule,
-		MemberModule,
+		forwardRef(() => MemberModule),
 		LikeModule,
 		NotificationModule,
 	],

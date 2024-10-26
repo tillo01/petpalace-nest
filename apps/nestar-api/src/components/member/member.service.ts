@@ -185,6 +185,14 @@ export class MemberService {
 	public async likeTargetMember(memberId: ObjectId, likeRefId: ObjectId): Promise<Member> {
 		const target: Member = await this.memberModel.findOne({ _id: likeRefId, memberStatus: MemberStatus.ACTIVE }).exec();
 		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		const author: Member = await this.memberModel
+			.findOne({
+				_id: memberId,
+				memberStatus: MemberStatus.ACTIVE,
+			})
+			.exec();
+		if (!author) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
 		const input: LikeInput = {
 			memberId: memberId,
 			likeRefId: likeRefId,
@@ -197,6 +205,7 @@ export class MemberService {
 
 		const inputNotif: NotifyMeInput = {
 			authorId: memberId,
+			authorNick: author.memberNick,
 			receiverId: likeRefId,
 			notificationStatus: NotificationStatus.WAIT,
 			notificationDesc: 'New Like',

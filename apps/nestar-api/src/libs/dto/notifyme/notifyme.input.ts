@@ -24,6 +24,10 @@ export class NotifyMeInput {
 	articleId: ObjectId;
 
 	@IsNotEmpty()
+	@Field(() => String, { nullable: true })
+	authorNick: string;
+
+	@IsNotEmpty()
 	@Field(() => NotificationType)
 	notificationType: NotificationType;
 

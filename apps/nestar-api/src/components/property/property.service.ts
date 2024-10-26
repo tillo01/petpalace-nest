@@ -312,7 +312,7 @@ export class PropertyService {
 
 		const inputNotif: NotifyMeInput = {
 			authorId: memberId,
-			receiverId: memberId,
+			receiverId: target.memberId,
 			authorNick: author.memberNick,
 			notificationStatus: NotificationStatus.WAIT,
 			notificationDesc: 'New Like',
@@ -321,6 +321,7 @@ export class PropertyService {
 			notificationTitle: 'Got new likes',
 			articleId: null,
 			propertyId: likeRefId,
+			propertyTitle: target.propertyTitle,
 		};
 		await this.notificationService.createNotification(inputNotif);
 

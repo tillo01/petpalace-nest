@@ -22,6 +22,9 @@ export class Notify {
 	@Field(() => String, { nullable: true })
 	authorNick?: string;
 
+	@Field(() => String, { nullable: true })
+	propertyTitle?: string;
+
 	@Field(() => NotificationType)
 	notificationType: NotificationType;
 

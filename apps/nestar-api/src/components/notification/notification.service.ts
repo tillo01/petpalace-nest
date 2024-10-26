@@ -50,9 +50,20 @@ export class NotificationService {
 						as: 'memberData',
 					},
 				},
+
 				{
 					$unwind: '$memberData',
 				},
+				{
+					$lookup: {
+						from: 'properties',
+						localField: 'propertyId',
+						foreignField: '_id',
+						as: 'propertyData',
+					},
+				},
+				{ $unwind: { path: '$propertyData', preserveNullAndEmptyArrays: true } },
+
 				{
 					$facet: {
 						list: [{ $limit: input.limit }],
@@ -65,6 +76,7 @@ export class NotificationService {
 		result.list = data[0].list.map((ele) => ({
 			...ele,
 			authorNick: ele.memberData.memberNick,
+			propertyTitle: ele.propertyTitle,
 		}));
 
 		return result;

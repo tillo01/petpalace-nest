@@ -33,6 +33,9 @@ const NotificationSchema = new Schema(
 		authorNick: {
 			type: String,
 		},
+		propertyTitle: {
+			type: String,
+		},
 
 		authorId: {
 			type: Schema.Types.ObjectId,

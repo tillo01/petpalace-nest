@@ -52,16 +52,16 @@ export class FAQsInput {
 @InputType()
 class FAQSearch {
 	@IsOptional()
-	@Field(() => String, { nullable: true })
-	memberId?: ObjectId;
+	@Field(() => NoticeCategory, { nullable: true })
+	categoryList?: NoticeCategory;
 
 	@IsOptional()
-	@Field(() => [NoticeCategory], { nullable: true })
-	categoryList?: NoticeCategory[];
+	@Field(() => NoticeType, { nullable: true })
+	noticeType?: NoticeType;
 
 	@IsOptional()
-	@Field(() => [NoticeType], { nullable: true })
-	typeList?: NoticeType[];
+	@Field(() => NoticeStatus, { nullable: true })
+	noticeStatus?: NoticeStatus;
 
 	@IsOptional()
 	@Field(() => [Int], { nullable: true })

@@ -28,23 +28,23 @@ export class FAQ {
 	@Field(() => String)
 	memberId: ObjectId;
 
-	@Field(() => Date, { nullable: true })
-	createdAt?: Date;
+	@Field(() => Date)
+	createdAt: Date;
 
 	@Field(() => Date, { nullable: true })
 	deletedAt?: Date;
 
-	@Field(() => Date, { nullable: true })
+	@Field(() => Date)
 	updatedAt?: Date;
 }
 
 @ObjectType()
 export class FAQs {
 	@Field(() => [FAQ])
-	liest: FAQ[];
+	list: FAQ[];
 
 	@Field(() => [FAQTotalCounter])
-	metaCounter: FAQTotalCounter[];
+	faqmetaCounter: FAQTotalCounter[];
 }
 
 @ObjectType()

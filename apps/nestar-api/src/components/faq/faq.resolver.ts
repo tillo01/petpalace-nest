@@ -1,12 +1,12 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FaqService } from './faq.service';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { UseGuards } from '@nestjs/common';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { FAQ } from '../../libs/dto/faq/faq';
+import { FAQ, FAQs } from '../../libs/dto/faq/faq';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
-import { FAQsInput } from '../../libs/dto/faq/faq.input';
+import { FAQInquiry, FAQsInput } from '../../libs/dto/faq/faq.input';
 import { ObjectId } from 'mongoose';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 
@@ -24,5 +24,13 @@ export class FaqResolver {
 		console.log('Mutations createFaqQuestions');
 
 		return await this.faqService.createFaqQuestions(memberId, input);
+	}
+
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Query((returns) => FAQs)
+	public async getAllFaqQuestionsByAdmin(@Args('input') input: FAQInquiry): Promise<FAQs> {
+		console.log('Query getAllFaqQuestionsByAdmin');
+		return await this.faqService.getAllFaqQuestionsByAdmin(input);
 	}
 }

@@ -1,11 +1,16 @@
 import mongoose, { Schema } from 'mongoose';
-import { NoticeCategory, NoticeStatus } from '../libs/enums/notice.enum';
+import { NoticeCategory, NoticeStatus, NoticeType } from '../libs/enums/notice.enum';
 
 const NoticeSchema = new Schema(
 	{
 		noticeCategory: {
 			type: String,
 			enum: NoticeCategory,
+			required: true,
+		},
+		noticeType: {
+			type: String,
+			enum: NoticeType,
 			required: true,
 		},
 
@@ -24,7 +29,10 @@ const NoticeSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		
+		noticeViews: {
+			type: Number,
+		},
+
 		memberId: {
 			type: Schema.Types.ObjectId,
 			required: true,

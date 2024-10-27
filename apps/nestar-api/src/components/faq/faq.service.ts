@@ -5,6 +5,7 @@ import { FAQ, FAQs } from '../../libs/dto/faq/faq';
 import { FAQInquiry, FAQsInput } from '../../libs/dto/faq/faq.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
+import { FAQUpdate } from '../../libs/dto/faq/faq.update';
 
 @Injectable()
 export class FaqService {
@@ -44,5 +45,11 @@ export class FaqService {
 		console.log('result=>>>>>>>', result);
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		return result[0];
+	}
+
+	public async updateFaqsQuestionsByAdmin(input: FAQUpdate): Promise<FAQ> {
+		const result: FAQ = await this.faqQuestionsModel.findByIdAndUpdate({ _id: input._id }, input, { new: true });
+		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+		return result;
 	}
 }

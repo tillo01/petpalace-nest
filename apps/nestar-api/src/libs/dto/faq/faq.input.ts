@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsIn, IsInt, IsNotEmpty, IsOptional, Min } from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
 import { NoticeCategory, NoticeStatus, NoticeType } from '../../enums/notice.enum';
 import { ObjectId } from 'mongoose';
 import { Direction } from '../../enums/common.enum';
@@ -25,10 +25,12 @@ export class FAQsInput {
 	noticeViews?: number;
 
 	@IsNotEmpty()
+	@Length(1, 300)
 	@Field(() => String)
 	noticeTitle: string;
 
 	@IsNotEmpty()
+	@Length(1, 300)
 	@Field(() => String)
 	noticeContent: string;
 

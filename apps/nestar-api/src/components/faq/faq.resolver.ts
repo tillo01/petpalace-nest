@@ -9,6 +9,7 @@ import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { FAQInquiry, FAQsInput } from '../../libs/dto/faq/faq.input';
 import { ObjectId } from 'mongoose';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { FAQUpdate } from '../../libs/dto/faq/faq.update';
 
 @Resolver()
 export class FaqResolver {
@@ -32,5 +33,14 @@ export class FaqResolver {
 	public async getAllFaqQuestionsByAdmin(@Args('input') input: FAQInquiry): Promise<FAQs> {
 		console.log('Query getAllFaqQuestionsByAdmin');
 		return await this.faqService.getAllFaqQuestionsByAdmin(input);
+	}
+
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Mutation((returns) => FAQ)
+	public async updateFaqsQuestionsByAdmin(@Args('input') input: FAQUpdate): Promise<FAQ> {
+		console.log('Mutations createFaqQuestions');
+
+		return await this.faqService.updateFaqsQuestionsByAdmin(input);
 	}
 }

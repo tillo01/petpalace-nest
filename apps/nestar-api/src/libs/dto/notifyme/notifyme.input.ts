@@ -12,8 +12,8 @@ export class NotifyMeInput {
 	authorId: ObjectId;
 
 	@IsNotEmpty()
-	@Field(() => String)
-	receiverId: ObjectId;
+	@Field(() => String, { nullable: true })
+	receiverId?: ObjectId;
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })

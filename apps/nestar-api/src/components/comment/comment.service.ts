@@ -19,6 +19,7 @@ import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
 import { PropertyStatus } from '../../libs/enums/property.enum';
 import { NotificationService } from '../notification/notification.service';
 import { MemberStatus } from '../../libs/enums/member.enum';
+import { BoardArticleStatus } from '../../libs/enums/board-article.enum';
 
 @Injectable()
 export class CommentService {
@@ -38,6 +39,20 @@ export class CommentService {
 		// input.commentRefId = shapeIntoMongoObjectId(input.commentRefId);
 		input.memberId = memberId;
 		let result = null;
+
+		const inputNotif: NotifyMeInput = {
+			authorId: memberId,
+			receiverId: null,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationDesc: 'New Comment',
+			notificationGroup: NotificationGroup.PROPERTY,
+			commentContent: input.commentContent,
+			notificationType: NotificationType.COMMENT,
+			notificationTitle: 'Commented to your property',
+			propertyId: null,
+			propertyTitle: '',
+		};
+
 		try {
 			result = await this.commentModel.create(input);
 		} catch (err) {
@@ -51,62 +66,39 @@ export class CommentService {
 					targetKey: 'propertyComments',
 					modifier: 1,
 				});
-				const memberProperty: Member = await this.memberModel
-					.findOne({
-						_id: memberId,
-						memberStatus: MemberStatus.ACTIVE,
-					})
-					.exec();
 
-				const target: Property = await this.propertyModel
-					.findOne({ _id: memberId, propertyStatus: PropertyStatus.ACTIVE })
-					.exec();
-				if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
-
-				const inputNotifProperty: NotifyMeInput = {
-					authorId: memberId,
-					// authorNick: memberProperty.memberNick,
-					receiverId: input.memberId, // Property owner
-					notificationStatus: NotificationStatus.WAIT,
-					notificationDesc: 'New Comment',
+				const getAgentProperty = await this.propertyService.getProperty(memberId, input.commentRefId);
+				const propertyNotif = {
+					...inputNotif,
+					receiverId: getAgentProperty.memberId,
 					notificationGroup: NotificationGroup.PROPERTY,
-					commentContent: input.commentContent,
-					notificationType: NotificationType.COMMENT,
-					notificationTitle: 'You received a new comment',
+					notificationTitle: 'Commented on your property',
 					propertyId: input.commentRefId,
-					propertyTitle: target.propertyTitle,
+					propertyTitle: getAgentProperty.propertyTitle,
 				};
-				await this.notificationService.createNotification(inputNotifProperty);
-				console.log('Notification created for PROPERTY group');
+
+				await this.notificationService.createNotification(propertyNotif);
 
 				break;
 			case CommentGroup.ARTICLE:
 				await this.boardArticleService.boardArticleStatsEditor({
 					_id: input.commentRefId,
-
 					targetKey: 'articleComments',
-
 					modifier: 1,
 				});
-				const article = await this.boardArticleModel.findById(input.commentRefId).exec();
-				if (!article) throw new InternalServerErrorException(`Article with ID ${input.commentRefId} not found.`);
 
-				const authorarticle = await this.memberModel.findById(memberId).exec();
-				const inputNotifArticle: NotifyMeInput = {
-					authorId: memberId,
-					// authorNick: authorarticle.memberNick,
-					receiverId: input.memberId, // Article author
-					notificationStatus: NotificationStatus.WAIT,
-					notificationDesc: 'New Comment',
+				const getBoardArticle = await this.boardArticleService.getBoardArticle(memberId, input.commentRefId);
+
+				const articleInput = {
+					...inputNotif,
+					receiverId: getBoardArticle.memberId,
 					notificationGroup: NotificationGroup.ARTICLE,
-					commentContent: input.commentContent,
-					notificationType: NotificationType.COMMENT,
-					notificationTitle: 'You received a new comment',
-					articleId: input.commentRefId,
-					articleTitle: article.articleTitle,
+					notificationTitle: 'Commented on your article',
+					articleId: getBoardArticle._id,
+					articleTitle: getBoardArticle.articleTitle,
 				};
-				await this.notificationService.createNotification(inputNotifArticle);
-				console.log('Notification created for ARTICLE group');
+
+				await this.notificationService.createNotification(articleInput);
 				break;
 
 			case CommentGroup.MEMBER:
@@ -116,24 +108,14 @@ export class CommentService {
 					modifier: 1,
 				});
 
-				const authorMember: Member = await this.memberModel
-					.findOne({
-						_id: memberId,
-						memberStatus: MemberStatus.ACTIVE,
-					})
-					.exec();
-				const inputNotif: NotifyMeInput = {
-					authorId: memberId,
-					// authorNick: authorMember.memberNick,
+				const memberInputNotif = {
+					...inputNotif,
 					receiverId: input.commentRefId,
-					notificationStatus: NotificationStatus.WAIT,
-					notificationDesc: 'New Comment',
 					notificationGroup: NotificationGroup.MEMBER,
-					commentContent: input.commentContent,
-					notificationType: NotificationType.COMMENT,
-					notificationTitle: 'You received a new comment',
+					notificationTitle: 'Commented on your profile',
 				};
-				await this.notificationService.createNotification(inputNotif);
+
+				await this.notificationService.createNotification(memberInputNotif);
 				break;
 		}
 

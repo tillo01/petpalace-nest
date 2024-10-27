@@ -22,10 +22,16 @@ export class Notify {
 	articleId?: ObjectId;
 
 	@Field(() => String, { nullable: true })
+	commentRefId?: ObjectId;
+
+	@Field(() => String, { nullable: true })
 	authorNick?: string;
 
 	@Field(() => String, { nullable: true })
 	propertyTitle?: string;
+
+	@Field(() => String, { nullable: true })
+	commentContent?: string;
 
 	@Field(() => String, { nullable: true })
 	@IsString()

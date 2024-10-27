@@ -8,6 +8,7 @@ import { MemberModule } from '../member/member.module';
 import { ViewModule } from '../view/view.module';
 import { LikeModule } from '../like/like.module';
 import { NotificationModule } from '../notification/notification.module';
+import { PropertyModule } from '../property/property.module';
 
 @Module({
 	imports: [
@@ -22,8 +23,9 @@ import { NotificationModule } from '../notification/notification.module';
 		ViewModule,
 		LikeModule,
 		NotificationModule,
+		PropertyModule,
 	],
 	providers: [BoardArticleResolver, BoardArticleService],
-	exports: [BoardArticleService],
+	exports: [BoardArticleService, MongooseModule],
 })
 export class BoardArticleModule {}

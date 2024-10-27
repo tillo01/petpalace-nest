@@ -17,11 +17,19 @@ export class NotifyMeInput {
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })
-	propertyId: ObjectId;
+	propertyId?: ObjectId;
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })
-	articleId: ObjectId;
+	articleId?: ObjectId;
+
+	@IsNotEmpty()
+	@Field(() => String, { nullable: true })
+	commentRefId?: ObjectId;
+
+	@IsNotEmpty()
+	@Field(() => String, { nullable: true })
+	commentContent?: string;
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })

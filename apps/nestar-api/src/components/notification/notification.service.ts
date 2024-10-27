@@ -9,6 +9,7 @@ import { T } from '../../libs/types/common';
 import { lookupAuthMemberLiked, lookupMember } from '../../libs/config';
 import { NotificationStatus } from '../../libs/enums/notification.enum';
 import { NotifUpdate } from '../../libs/dto/notifyme/notifyme.update';
+import path from 'path';
 
 @Injectable()
 export class NotificationService {
@@ -72,6 +73,15 @@ export class NotificationService {
 					},
 				},
 				{ $unwind: { path: '$articleData', preserveNullAndEmptyArrays: true } },
+				{
+					$lookup: {
+						from: 'comments',
+						localField: 'commentRefId',
+						foreignField: '_id',
+						as: 'commentData',
+					},
+				},
+				{ $unwind: { path: '$commentData', preserveNullAndEmptyArrays: true } },
 
 				{
 					$facet: {
@@ -87,6 +97,7 @@ export class NotificationService {
 			authorNick: ele.memberData.memberNick,
 			propertyTitle: ele.propertyTitle,
 			artticleTitle: ele.articleTitle,
+			commentContent: ele.commentContent,
 		}));
 
 		return result;

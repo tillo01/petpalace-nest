@@ -39,11 +39,19 @@ const NotificationSchema = new Schema(
 		articleTitle: {
 			type: String,
 		},
+		commentContent: {
+			type: String,
+		},
 
 		authorId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: 'Member',
+		},
+
+		commentRefId: {
+			type: Schema.Types.ObjectId,
+			ref: 'Comment',
 		},
 
 		receiverId: {

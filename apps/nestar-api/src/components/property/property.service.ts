@@ -1,6 +1,6 @@
 import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, Schema } from 'mongoose';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import {
 	AgentPropertiesInquiry,
@@ -30,6 +30,9 @@ import { MemberStatus } from '../../libs/enums/member.enum';
 
 @Injectable()
 export class PropertyService {
+	findById(commentRefId: Schema.Types.ObjectId) {
+		throw new Error('Method not implemented.');
+	}
 	constructor(
 		@InjectModel('Property') private readonly propertyModel: Model<Property>,
 		@InjectModel('Member') private readonly memberModel: Model<Member>,

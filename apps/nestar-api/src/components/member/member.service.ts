@@ -179,7 +179,7 @@ export class MemberService {
 	public async memberStatsEditor(input: StatisticModifier): Promise<Member> {
 		const { _id, targetKey, modifier } = input;
 
-		return await this.memberModel.findOneAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
+		return await this.memberModel.findOneAndUpdate({ _id }, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
 	}
 
 	public async likeTargetMember(memberId: ObjectId, likeRefId: ObjectId): Promise<Member> {

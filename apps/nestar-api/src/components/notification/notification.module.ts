@@ -6,6 +6,7 @@ import { MemberModule } from '../member/member.module';
 import { NotificationResolver } from './notification.resolver';
 import { LikeModule } from '../like/like.module';
 import { AuthModule } from '../auth/auth.module';
+import { CommentModule } from '../comment/comment.module';
 
 @Module({
 	imports: [

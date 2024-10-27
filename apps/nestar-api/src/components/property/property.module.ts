@@ -19,6 +19,6 @@ import { NotificationModule } from '../notification/notification.module';
 		NotificationModule,
 	],
 	providers: [PropertyResolver, PropertyService],
-	exports: [PropertyService],
+	exports: [PropertyService, MongooseModule],
 })
 export class PropertyModule {}

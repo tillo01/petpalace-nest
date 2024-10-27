@@ -53,13 +53,13 @@ export class NotifyMeInput {
 
 	@IsOptional()
 	@Length(1, 30)
-	@Field(() => String)
-	notificationDesc: String;
+	@Field(() => String, { nullable: true })
+	notificationDesc?: String;
 
 	@IsOptional()
 	@Length(1, 30)
-	@Field(() => String)
-	notificationTitle: String;
+	@Field(() => String, { nullable: true })
+	notificationTitle?: String;
 
 	@IsNotEmpty()
 	@Field(() => NotificationStatus)

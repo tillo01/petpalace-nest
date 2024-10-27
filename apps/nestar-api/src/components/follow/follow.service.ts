@@ -13,12 +13,16 @@ import {
 } from '../../libs/config';
 import { FollowInquiry } from '../../libs/dto/follow/follow.input';
 import { lookup } from 'dns/promises';
+import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
+import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class FollowService {
 	constructor(
 		@InjectModel('Follow') private readonly followModel: Model<Follower | Following>,
 		private memberService: MemberService,
+		private notificationService: NotificationService,
 		private authService: AuthService,
 	) {}
 
@@ -39,6 +43,15 @@ export class FollowService {
 			targetKey: 'memberFollowings',
 			modifier: 1,
 		});
+		const notifInput: NotifyMeInput = {
+			authorId: followerId,
+			receiverId: followingId,
+			notificationGroup: NotificationGroup.MEMBER,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationTitle: 'New Followers,',
+			notificationType: NotificationType.FOLLOW,
+		};
+		await this.notificationService.createNotification(notifInput);
 
 		await this.memberService.memberStatsEditor({
 			_id: followingId,

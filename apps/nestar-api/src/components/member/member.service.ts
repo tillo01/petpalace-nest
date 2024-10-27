@@ -209,10 +209,10 @@ export class MemberService {
 				authorNick: author.memberNick,
 				receiverId: likeRefId,
 				notificationStatus: NotificationStatus.WAIT,
-				notificationDesc: 'New Like',
+				notificationDesc: 'New Like to your profile',
 				notificationGroup: NotificationGroup.MEMBER,
 				notificationType: NotificationType.LIKE,
-				notificationTitle: 'Got new likes',
+				notificationTitle: 'New Like to your profile',
 				articleId: null,
 				propertyId: null,
 			};

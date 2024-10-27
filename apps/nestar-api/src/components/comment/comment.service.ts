@@ -44,11 +44,10 @@ export class CommentService {
 			authorId: memberId,
 			receiverId: null,
 			notificationStatus: NotificationStatus.WAIT,
-			notificationDesc: 'New Comment',
+			notificationDesc: '',
 			notificationGroup: NotificationGroup.PROPERTY,
 			commentContent: input.commentContent,
 			notificationType: NotificationType.COMMENT,
-			notificationTitle: 'Commented to your property',
 			propertyId: null,
 			propertyTitle: '',
 		};

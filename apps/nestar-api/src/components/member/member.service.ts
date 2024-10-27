@@ -203,19 +203,21 @@ export class MemberService {
 		const modifier: number = await this.likeService.toggleLike(input);
 		console.log('Before createNotification=>>>>>>>>>>');
 
-		const inputNotif: NotifyMeInput = {
-			authorId: memberId,
-			authorNick: author.memberNick,
-			receiverId: likeRefId,
-			notificationStatus: NotificationStatus.WAIT,
-			notificationDesc: 'New Like',
-			notificationGroup: NotificationGroup.MEMBER,
-			notificationType: NotificationType.LIKE,
-			notificationTitle: 'Got new likes',
-			articleId: null,
-			propertyId: null,
-		};
-		await this.notificationService.createNotification(inputNotif);
+		if (modifier === 1) {
+			const inputNotif: NotifyMeInput = {
+				authorId: memberId,
+				authorNick: author.memberNick,
+				receiverId: likeRefId,
+				notificationStatus: NotificationStatus.WAIT,
+				notificationDesc: 'New Like',
+				notificationGroup: NotificationGroup.MEMBER,
+				notificationType: NotificationType.LIKE,
+				notificationTitle: 'Got new likes',
+				articleId: null,
+				propertyId: null,
+			};
+			await this.notificationService.createNotification(inputNotif);
+		}
 
 		const result = await this.memberStatsEditor({
 			_id: likeRefId,

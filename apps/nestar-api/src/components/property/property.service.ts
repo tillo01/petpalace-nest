@@ -310,20 +310,22 @@ export class PropertyService {
 		// LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
 
-		const inputNotif: NotifyMeInput = {
-			authorId: memberId,
-			receiverId: target.memberId,
-			authorNick: author.memberNick,
-			notificationStatus: NotificationStatus.WAIT,
-			notificationDesc: 'New Like',
-			notificationGroup: NotificationGroup.PROPERTY,
-			notificationType: NotificationType.LIKE,
-			notificationTitle: 'Got new likes',
-			articleId: null,
-			propertyId: likeRefId,
-			propertyTitle: target.propertyTitle,
-		};
-		await this.notificationService.createNotification(inputNotif);
+		if (modifier === 1) {
+			const inputNotif: NotifyMeInput = {
+				authorId: memberId,
+				receiverId: target.memberId,
+				authorNick: author.memberNick,
+				notificationStatus: NotificationStatus.WAIT,
+				notificationDesc: 'New Like',
+				notificationGroup: NotificationGroup.PROPERTY,
+				notificationType: NotificationType.LIKE,
+				notificationTitle: 'Got new likes',
+				articleId: null,
+				propertyId: likeRefId,
+				propertyTitle: target.propertyTitle,
+			};
+			await this.notificationService.createNotification(inputNotif);
+		}
 
 		const result = await this.propertyStatsEditor({ _id: likeRefId, targetKey: 'propertyLikes', modifier: modifier });
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);

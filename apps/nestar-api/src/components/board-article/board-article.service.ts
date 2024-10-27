@@ -238,20 +238,22 @@ export class BoardArticleService {
 		// LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
 
-		const inputNotif: NotifyMeInput = {
-			authorId: memberId,
-			receiverId: target.memberId,
-			authorNick: `**${author.memberNick}**`,
-			articleTitle: target.articleTitle,
-			notificationStatus: NotificationStatus.WAIT,
-			notificationDesc: 'New Like',
-			notificationGroup: NotificationGroup.ARTICLE,
-			notificationType: NotificationType.LIKE,
-			notificationTitle: 'Got new likes',
-			articleId: likeRefId,
-			propertyId: null,
-		};
-		await this.notificationService.createNotification(inputNotif);
+		if (modifier === 1) {
+			const inputNotif: NotifyMeInput = {
+				authorId: memberId,
+				receiverId: target.memberId,
+				authorNick: `**${author.memberNick}**`,
+				articleTitle: target.articleTitle,
+				notificationStatus: NotificationStatus.WAIT,
+				notificationDesc: 'New Like',
+				notificationGroup: NotificationGroup.ARTICLE,
+				notificationType: NotificationType.LIKE,
+				notificationTitle: 'Got new likes',
+				articleId: likeRefId,
+				propertyId: null,
+			};
+			await this.notificationService.createNotification(inputNotif);
+		}
 		const result = await this.boardArticleStatsEditor({
 			_id: likeRefId,
 			targetKey: 'articleLikes',

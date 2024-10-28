@@ -11,13 +11,13 @@ export class FAQsInput {
 	@Field(() => NoticeCategory)
 	noticeCategory: NoticeCategory;
 
-	@IsNotEmpty()
-	@Field(() => NoticeStatus)
-	noticeStatus: NoticeStatus;
+	@IsOptional()
+	@Field(() => NoticeStatus, { nullable: true })
+	noticeStatus?: NoticeStatus;
 
-	@IsNotEmpty()
-	@Field(() => NoticeType)
-	noticeType: NoticeType;
+	@IsOptional()
+	@Field(() => NoticeType, { nullable: true })
+	noticeType?: NoticeType;
 
 	@IsNotEmpty()
 	@Length(1, 300)

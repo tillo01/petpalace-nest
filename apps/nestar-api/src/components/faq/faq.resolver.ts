@@ -24,7 +24,6 @@ export class FaqResolver {
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<FAQ> {
 		console.log('Mutations createFaqQuestions');
-
 		return await this.faqService.createFaqQuestions(memberId, input);
 	}
 

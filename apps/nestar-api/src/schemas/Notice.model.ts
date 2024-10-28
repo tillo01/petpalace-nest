@@ -11,13 +11,11 @@ const NoticeSchema = new Schema(
 		noticeType: {
 			type: String,
 			enum: NoticeType,
-			required: true,
 		},
 
 		noticeStatus: {
 			type: String,
 			enum: NoticeStatus,
-			default: NoticeStatus.ACTIVE,
 		},
 
 		noticeTitle: {

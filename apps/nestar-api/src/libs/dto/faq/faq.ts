@@ -10,11 +10,11 @@ export class FAQ {
 	@Field(() => NoticeCategory)
 	noticeCategory: NoticeCategory;
 
-	@Field(() => NoticeStatus)
-	noticeStatus: NoticeStatus;
+	@Field(() => NoticeStatus, { nullable: true })
+	noticeStatus?: NoticeStatus;
 
-	@Field(() => NoticeType)
-	noticeType: NoticeType;
+	@Field(() => NoticeType, { nullable: true })
+	noticeType?: NoticeType;
 
 	@Field(() => String)
 	noticeTitle: string;

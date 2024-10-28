@@ -10,13 +10,13 @@ import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
 import { NotifUpdate } from '../../libs/dto/notifyme/notifyme.update';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class NotificationResolver {
 	constructor(private readonly notificationService: NotificationService) {}
 
-	@Roles(MemberType.AGENT)
-	@UseGuards(RolesGuard)
+	@UseGuards(WithoutGuard)
 	@Query((returns) => Notifies)
 	public async getNotifications(
 		@Args('input') input: NotifInquiry,
@@ -27,8 +27,7 @@ export class NotificationResolver {
 		return await this.notificationService.getNotifications(receiverId, input);
 	}
 
-	@Roles(MemberType.AGENT)
-	@UseGuards(RolesGuard)
+	@UseGuards(WithoutGuard)
 	@Mutation((returns) => Notify)
 	public async updateNotifications(@Args('input') input: NotifUpdate): Promise<Notify> {
 		console.log('Query: getNotifications');

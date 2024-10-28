@@ -19,11 +19,6 @@ export class FAQsInput {
 	@Field(() => NoticeType)
 	noticeType: NoticeType;
 
-	@IsOptional()
-	@IsInt()
-	@Field(() => Number, { nullable: true })
-	noticeViews?: number;
-
 	@IsNotEmpty()
 	@Length(1, 300)
 	@Field(() => String)
@@ -53,6 +48,10 @@ export class FAQsInput {
 
 @InputType()
 class FAQSearch {
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	memberId?: ObjectId;
+
 	@IsOptional()
 	@Field(() => NoticeCategory, { nullable: true })
 	categoryList?: NoticeCategory;

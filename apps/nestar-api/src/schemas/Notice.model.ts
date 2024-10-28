@@ -31,6 +31,7 @@ const NoticeSchema = new Schema(
 		},
 		noticeViews: {
 			type: Number,
+			default: 0,
 		},
 
 		memberId: {

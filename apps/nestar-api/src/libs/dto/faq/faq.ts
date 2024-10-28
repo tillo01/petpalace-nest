@@ -16,11 +16,11 @@ export class FAQ {
 	@Field(() => NoticeType)
 	noticeType: NoticeType;
 
-	@Field(() => String, { nullable: true })
-	noticeViews?: string;
-
 	@Field(() => String)
 	noticeTitle: string;
+
+	@Field(() => Int)
+	noticeViews: number;
 
 	@Field(() => String)
 	noticeContent: string;

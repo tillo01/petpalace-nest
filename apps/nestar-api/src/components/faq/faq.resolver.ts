@@ -10,6 +10,7 @@ import { FAQInquiry, FAQsInput } from '../../libs/dto/faq/faq.input';
 import { ObjectId } from 'mongoose';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { FAQUpdate } from '../../libs/dto/faq/faq.update';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class FaqResolver {
@@ -32,7 +33,7 @@ export class FaqResolver {
 	@Query((returns) => FAQs)
 	public async getAllFaqQuestionsByAdmin(@Args('input') input: FAQInquiry): Promise<FAQs> {
 		console.log('Query getAllFaqQuestionsByAdmin');
-		return await this.faqService.getAllFaqQuestionsByAdmin(input);
+		return await this.faqService.getAllFaqQuestions(input);
 	}
 
 	@Roles(MemberType.ADMIN)
@@ -42,5 +43,23 @@ export class FaqResolver {
 		console.log('Mutations createFaqQuestions');
 
 		return await this.faqService.updateFaqsQuestionsByAdmin(input);
+	}
+
+	@UseGuards(WithoutGuard)
+	@Query((returns) => FAQs)
+	public async getAllFaqQuestions(
+		@Args('input') input: FAQInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<FAQs> {
+		console.log('Query getAllFaqQuestionsByAdmin');
+		return await this.faqService.getAllFaqQuestions(input);
+	}
+
+	@UseGuards(WithoutGuard)
+	@Query((returns) => FAQ)
+	public async getFaqQuestion(@Args('answerId') input: string, @AuthMember('_id') memberId: ObjectId): Promise<FAQ> {
+		console.log('Query getFaqQuestion');
+		const answerId = shapeIntoMongoObjectId(input);
+		return await this.faqService.getFaqQuestion(memberId, answerId);
 	}
 }

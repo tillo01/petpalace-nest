@@ -58,11 +58,9 @@ export class FaqService {
 
 	public async updateFaqsQuestionsByAdmin(input: FAQUpdate): Promise<FAQ> {
 		const { _id, noticeStatus } = input;
-		const result: FAQ = await this.faqQuestionsModel.findByIdAndUpdate(
-			{ _id: _id, noticeStatus: NoticeStatus.ACTIVE },
-			input,
-			{ new: true },
-		);
+		const result: FAQ = await this.faqQuestionsModel.findByIdAndUpdate({ _id: _id }, input, { new: true });
+		console.log('=>>>>>>res', result);
+
 		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 		return result;
 	}
@@ -120,9 +118,6 @@ export class FaqService {
 	}
 
 	public async removeQuestionsByAdmin(questionId: ObjectId): Promise<FAQ> {
-		console.log('Succesfully deleted');
-		console.log('Attempting to delete:', questionId, NoticeStatus.DELETE);
-
 		const search: T = {
 			_id: questionId,
 			noticeStatus: NoticeStatus.DELETE,

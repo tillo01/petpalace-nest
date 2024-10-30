@@ -25,7 +25,7 @@ export class FAQsInput {
 	noticeTitle: string;
 
 	@IsNotEmpty()
-	@Length(1, 300)
+	@Length(1, 1000)
 	@Field(() => String)
 	noticeContent: string;
 

@@ -19,7 +19,7 @@ export class FAQ {
 	@Field(() => String)
 	noticeTitle: string;
 
-	@Field(() => Int)
+	@Field(() => Int, { nullable: true })
 	noticeViews: number;
 
 	@Field(() => String)

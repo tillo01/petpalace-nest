@@ -10,6 +10,7 @@ import { shapeIntoMongoObjectId } from '../../libs/config';
 import { NoticeStatus } from '../../libs/enums/notice.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import ViewService from '../view/view.service';
+import { MemberType } from '../../libs/enums/member.enum';
 
 @Injectable()
 export class FaqService {
@@ -18,7 +19,8 @@ export class FaqService {
 		private readonly viewService: ViewService,
 	) {}
 	public async createFaqQuestions(memberId: ObjectId, input: FAQsInput): Promise<FAQ> {
-		input.memberId = memberId;
+		input.memberId =
+			memberId; /** Kirib kelayotkan memberId bn biz backenda xosi qilgan memberId ga teklawtirb olyapmiz */
 		try {
 			const result = await this.faqQuestionsModel.create(input);
 			return result;
@@ -55,7 +57,12 @@ export class FaqService {
 	}
 
 	public async updateFaqsQuestionsByAdmin(input: FAQUpdate): Promise<FAQ> {
-		const result: FAQ = await this.faqQuestionsModel.findByIdAndUpdate({ _id: input._id }, input, { new: true });
+		const { _id, noticeStatus } = input;
+		const result: FAQ = await this.faqQuestionsModel.findByIdAndUpdate(
+			{ _id: _id, noticeStatus: NoticeStatus.ACTIVE },
+			input,
+			{ new: true },
+		);
 		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 		return result;
 	}
@@ -98,7 +105,11 @@ export class FaqService {
 		const targetQuestion: FAQ = await this.faqQuestionsModel.findOne(search).lean().exec();
 		if (!targetQuestion) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		if (memberId) {
-			const viewInput = { memberId: memberId, viewRefId: answerId, viewGroup: ViewGroup.NOTICE };
+			const viewInput = {
+				memberId: memberId,
+				viewRefId: answerId,
+				viewGroup: ViewGroup.NOTICE,
+			};
 			const newView = await this.viewService.recordView(viewInput);
 			if (newView) {
 				await this.faqQuestionsStatsEditor({ _id: answerId, targetKey: 'noticeViews', modifier: 1 });
@@ -106,6 +117,22 @@ export class FaqService {
 			}
 		}
 		return targetQuestion;
+	}
+
+	public async removeQuestionsByAdmin(questionId: ObjectId): Promise<FAQ> {
+		console.log('Succesfully deleted');
+		console.log('Attempting to delete:', questionId, NoticeStatus.DELETE);
+
+		const search: T = {
+			_id: questionId,
+			noticeStatus: NoticeStatus.DELETE,
+		};
+		const result = await this.faqQuestionsModel.findOneAndDelete(search).exec();
+		if (!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
+		console.log('Succesfully deleted');
+		console.log('Attempting to delete:', questionId, NoticeStatus.DELETE);
+
+		return result;
 	}
 
 	public async faqQuestionsStatsEditor(input: StatisticModifier): Promise<FAQ> {

@@ -322,6 +322,7 @@ export class PropertyService {
 				notificationDesc: 'New Like to your property',
 				notificationGroup: NotificationGroup.PROPERTY,
 				notificationType: NotificationType.LIKE,
+				notificationTitle: 'New Like to your property',
 				articleId: null,
 				propertyId: likeRefId,
 				propertyTitle: target.propertyTitle,

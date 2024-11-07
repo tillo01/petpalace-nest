@@ -164,7 +164,7 @@ export class PropertyService {
 		if (squaresRange) match.propertySquare = { $gte: squaresRange.start, $lte: squaresRange.end };
 
 		if (text) match.propertyTitle = { $regex: new RegExp(text, 'i') };
-		if (options) {
+		if (options && options.length) {
 			match['$or'] = options.map((ele) => {
 				return { [ele]: true };
 			});

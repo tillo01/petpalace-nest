@@ -33,7 +33,7 @@ const NotificationSchema = new Schema(
 		authorNick: {
 			type: String,
 		},
-		propertyTitle: {
+		petTitle: {
 			type: String,
 		},
 		articleTitle: {
@@ -60,9 +60,9 @@ const NotificationSchema = new Schema(
 			ref: 'Member',
 		},
 
-		propertyId: {
+		petId: {
 			type: Schema.Types.ObjectId,
-			ref: 'Property',
+			ref: 'Pet',
 		},
 
 		articleId: {

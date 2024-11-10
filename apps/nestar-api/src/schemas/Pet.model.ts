@@ -1,91 +1,91 @@
 import { Schema } from 'mongoose';
-import { PropertyLocation, PropertyStatus, PropertyType } from '../libs/enums/property.enum';
+import { PetLocation, PetStatus, PetType } from '../libs/enums/pet.enum';
 
-const PropertySchema = new Schema(
+const PetSchema = new Schema(
 	{
-		propertyType: {
+		petType: {
 			type: String,
-			enum: PropertyType,
+			enum: PetType,
 			required: true,
 		},
 
-		propertyStatus: {
+		petStatus: {
 			type: String,
-			enum: PropertyStatus,
-			default: PropertyStatus.ACTIVE,
+			enum: PetStatus,
+			default: PetStatus.ACTIVE,
 		},
 
-		propertyLocation: {
+		petLocation: {
 			type: String,
-			enum: PropertyLocation,
+			enum: PetLocation,
 			required: true,
 		},
 
-		propertyAddress: {
-			type: String,
-			required: true,
-		},
-
-		propertyTitle: {
+		petAddress: {
 			type: String,
 			required: true,
 		},
 
-		propertyPrice: {
+		petTitle: {
+			type: String,
+			required: true,
+		},
+
+		petPrice: {
 			type: Number,
 			required: true,
 		},
 
-		propertySquare: {
+		petWeight: {
 			type: Number,
 			required: true,
 		},
 
-		propertyBeds: {
+		petHeight: {
 			type: Number,
 			required: true,
 		},
 
-		propertyRooms: {
+		petAges: {
 			type: Number,
 			required: true,
 		},
 
-		propertyViews: {
+		petViews: {
 			type: Number,
 			default: 0,
 		},
 
-		propertyLikes: {
+		petLikes: {
 			type: Number,
 			default: 0,
 		},
 
-		propertyComments: {
+		petComments: {
 			type: Number,
 			default: 0,
 		},
 
-		propertyRank: {
+		petRank: {
 			type: Number,
 			default: 0,
 		},
 
-		propertyImages: {
+		petImages: {
 			type: [String],
 			required: true,
 		},
 
-		propertyDesc: {
+		petDesc: {
 			type: String,
 		},
 
-		propertyBarter: {
+		petSell: {
 			type: Boolean,
 			default: false,
 		},
 
-		propertyRent: {
+		petAdoption: {
 			type: Boolean,
 			default: false,
 		},
@@ -104,13 +104,13 @@ const PropertySchema = new Schema(
 			type: Date,
 		},
 
-		constructedAt: {
+		bornAt: {
 			type: Date,
 		},
 	},
-	{ timestamps: true, collection: 'properties' },
+	{ timestamps: true, collection: 'pets' },
 );
 
-PropertySchema.index({ propertyType: 1, propertyLocation: 1, propertyTitle: 1, propertyPrice: 1 }, { unique: true });
+PetSchema.index({ petType: 1, petLocation: 1, petTitle: 1, petPrice: 1 }, { unique: true });
 
-export default PropertySchema;
+export default PetSchema;

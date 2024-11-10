@@ -5,10 +5,10 @@ import { Like, MeLiked } from '../../libs/dto/like/like';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { Message } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
-import { Properties } from '../../libs/dto/property/property';
+import { Pets } from '../../libs/dto/pet/pet';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { lookupFavorite } from '../../libs/config';
-import { OrdinaryInquiry } from '../../libs/dto/property/property.input';
+import { OrdinaryInquiry } from '../../libs/dto/pet/pet.input';
 import { MemberService } from '../member/member.service';
 
 @Injectable()
@@ -48,7 +48,7 @@ export class LikeService {
 		return result ? [{ memberId: memberId, likeRefId: likeRefId, myFavorite: true }] : [];
 	}
 
-	public async getFavoriteProperties(memberId: ObjectId, input: OrdinaryInquiry): Promise<Properties> {
+	public async getFavoritePets(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pets> {
 		const { page, limit } = input;
 		const match: T = { likeGroup: LikeGroup.PROPERTY, memberId: memberId };
 
@@ -60,20 +60,20 @@ export class LikeService {
 				{ $sort: { updatedAt: -1 } },
 				{
 					$lookup: {
-						from: 'properties',
+						from: 'pets',
 						localField: 'likeRefId',
 						foreignField: '_id',
-						as: 'favoriteProperty',
+						as: 'favoritePet',
 					},
 				},
-				{ $unwind: '$favoriteProperty' },
+				{ $unwind: '$favoritePet' },
 				{
 					$facet: {
 						list: [
 							{ $skip: (page - 1) * limit },
 							{ $limit: limit },
 							lookupFavorite,
-							{ $unwind: '$favoriteProperty.memberData' },
+							{ $unwind: '$favoritePet.memberData' },
 						],
 						metaCounter: [{ $count: 'total' }],
 					},
@@ -81,8 +81,8 @@ export class LikeService {
 			])
 			.exec();
 		console.log('data', data);
-		const result: Properties = { list: [], metaCounter: data[0].metaCounter };
-		result.list = data[0].list.map((ele) => ele.favoriteProperty);
+		const result: Pets = { list: [], metaCounter: data[0].metaCounter };
+		result.list = data[0].list.map((ele) => ele.favoritePet);
 		console.log('result', result);
 
 		return result;

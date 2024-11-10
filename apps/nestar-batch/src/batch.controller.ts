@@ -1,7 +1,7 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { BatchService } from './batch.service';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
-import { BATCH_ROLLBACK, BATCH_TOP_AGENTS, BATCH_TOP_PROPERTIES } from './lib/config';
+import { BATCH_ROLLBACK, BATCH_TOP_SELLERS, BATCH_TOP_PROPERTIES } from './lib/config';
 
 @Controller()
 export class NestarBatchController {
@@ -24,22 +24,22 @@ export class NestarBatchController {
 	}
 
 	@Cron('20 00 01 * * * ', { name: 'BATCH_TOP_PROPERTIES' })
-	public async batchTopProperties() {
+	public async batchTopPets() {
 		try {
 			this.logger['context'] = BATCH_TOP_PROPERTIES;
 			this.logger.debug('BATCH_TOP_PROPERTIES!');
-			await this.batchService.batchTopProperties();
+			await this.batchService.batchTopPets();
 		} catch (err) {
 			this.logger.error(err);
 		}
 	}
 
-	@Cron('40 00 01 * * * ', { name: 'BATCH_TOP_AGENTS ' })
-	public async batchTopAgents() {
+	@Cron('40 00 01 * * * ', { name: 'BATCH_TOP_SELLERS ' })
+	public async batchTopSellers() {
 		try {
-			this.logger['context'] = BATCH_TOP_AGENTS;
-			this.logger.debug('BATCH_TOP_AGENTS!');
-			await this.batchService.batchTopAgents();
+			this.logger['context'] = BATCH_TOP_SELLERS;
+			this.logger.debug('BATCH_TOP_SELLERS!');
+			await this.batchService.batchTopSellers();
 		} catch (err) {
 			this.logger.error(err);
 		}

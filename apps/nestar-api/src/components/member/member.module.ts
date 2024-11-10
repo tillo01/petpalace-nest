@@ -9,7 +9,7 @@ import { LikeModule } from '../like/like.module';
 import FollowSchema from '../../schemas/Follow.model';
 import { NotificationModule } from '../notification/notification.module';
 import NotificationSchema from '../../schemas/Notification.model';
-import { PropertyModule } from '../property/property.module';
+import { PetModule } from '../pet/pet.module';
 
 @Module({
 	imports: [
@@ -19,7 +19,7 @@ import { PropertyModule } from '../property/property.module';
 		AuthModule,
 		ViewModule,
 		LikeModule,
-		forwardRef(() => PropertyModule),
+		forwardRef(() => PetModule),
 		forwardRef(() => NotificationModule),
 		forwardRef(() => LikeModule),
 	],

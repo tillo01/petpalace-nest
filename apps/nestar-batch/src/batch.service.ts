@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Property } from '../../nestar-api/src/libs/dto/property/property';
+import { Pet } from '../../nestar-api/src/libs/dto/pet/pet';
 import { Member } from '../../nestar-api/src/libs/dto/member/member';
-import { PropertyStatus } from '../../nestar-api/src/libs/enums/property.enum';
 import { MemberStatus, MemberType } from '../../nestar-api/src/libs/enums/member.enum';
+import { PetStatus } from '../../nestar-api/src/libs/enums/pet.enum';
 
 @Injectable()
 export class BatchService {
 	constructor(
-		@InjectModel('Property') private readonly propertyModel: Model<Property>,
+		@InjectModel('Pet') private readonly petModel: Model<Pet>,
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
 	) {}
 
 	public async batchRollback(): Promise<void> {
-		await this.propertyModel
+		await this.petModel
 			.updateMany(
 				{
-					propertyStatus: PropertyStatus.ACTIVE,
+					petStatus: PetStatus.ACTIVE,
 				},
-				{ propertyRank: 0 },
+				{ petRank: 0 },
 			)
 			.exec();
 
@@ -27,41 +27,41 @@ export class BatchService {
 			.updateMany(
 				{
 					memberStatus: MemberStatus.ACTIVE,
-					memberType: MemberType.AGENT,
+					memberType: MemberType.SELLER,
 				},
 				{ memberRank: 0 },
 			)
 			.exec();
 	}
 
-	public async batchTopProperties(): Promise<void> {
-		const properties: Property[] = await this.propertyModel
+	public async batchTopPets(): Promise<void> {
+		const pets: Pet[] = await this.petModel
 			.find({
-				propertyStatus: PropertyStatus.ACTIVE,
-				propertyRank: 0,
+				petStatus: PetStatus.ACTIVE,
+				petRank: 0,
 			})
 			.exec();
 
-		const promisedList = properties.map(async (ele: Property) => {
-			const { _id, propertyLikes, propertyViews } = ele;
-			const rank = propertyLikes * 2 + propertyViews * 1;
-			return await this.propertyModel.findByIdAndUpdate(_id, { propertyRank: rank });
+		const promisedList = pets.map(async (ele: Pet) => {
+			const { _id, petLikes, petViews } = ele;
+			const rank = petLikes * 2 + petViews * 1;
+			return await this.petModel.findByIdAndUpdate(_id, { petRank: rank });
 		});
 		await Promise.all(promisedList);
 	}
 
-	public async batchTopAgents(): Promise<void> {
-		const agents: Member[] = await this.memberModel
+	public async batchTopSellers(): Promise<void> {
+		const sellers: Member[] = await this.memberModel
 			.find({
-				memberType: MemberType.AGENT,
+				memberType: MemberType.SELLER,
 				memberStatus: MemberStatus.ACTIVE,
 				memberRank: 0,
 			})
 			.exec();
 
-		const promisedList = agents.map(async (ele: Member) => {
-			const { _id, memberProperties, memberLikes, memberArticles, memberViews } = ele;
-			const rank = memberProperties * 5 + memberArticles * 3 + memberLikes * 2 + memberViews * 1;
+		const promisedList = sellers.map(async (ele: Member) => {
+			const { _id, memberPets, memberLikes, memberArticles, memberViews } = ele;
+			const rank = memberPets * 5 + memberArticles * 3 + memberLikes * 2 + memberViews * 1;
 			return await this.memberModel.findByIdAndUpdate(_id, { memberRank: rank });
 		});
 		await Promise.all(promisedList);

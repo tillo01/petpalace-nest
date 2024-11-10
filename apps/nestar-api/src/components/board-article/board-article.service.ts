@@ -248,7 +248,7 @@ export class BoardArticleService {
 				notificationGroup: NotificationGroup.ARTICLE,
 				notificationType: NotificationType.LIKE,
 				articleId: likeRefId,
-				propertyId: null,
+				petId: null,
 			};
 			await this.notificationService.createNotification(inputNotif);
 		}

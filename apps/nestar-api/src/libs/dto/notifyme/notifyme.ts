@@ -16,7 +16,7 @@ export class Notify {
 	receiverId: ObjectId;
 
 	@Field(() => String, { nullable: true })
-	propertyId?: ObjectId;
+	petId?: ObjectId;
 
 	@Field(() => String, { nullable: true })
 	articleId?: ObjectId;
@@ -28,7 +28,7 @@ export class Notify {
 	authorNick?: string;
 
 	@Field(() => String, { nullable: true })
-	propertyTitle?: string;
+	petTitle?: string;
 
 	@Field(() => String, { nullable: true })
 	commentContent?: string;

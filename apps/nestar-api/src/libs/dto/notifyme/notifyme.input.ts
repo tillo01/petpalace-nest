@@ -17,7 +17,7 @@ export class NotifyMeInput {
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })
-	propertyId?: ObjectId;
+	petId?: ObjectId;
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })
@@ -37,7 +37,7 @@ export class NotifyMeInput {
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })
-	propertyTitle?: string;
+	petTitle?: string;
 
 	@IsNotEmpty()
 	@Field(() => String, { nullable: true })

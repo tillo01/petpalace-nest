@@ -1,9 +1,9 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
-import { PetLocation, PetStatus, PetType } from '../../enums/pet.enum';
 import { ObjectId } from 'mongoose';
 import { availableOptions, availablePetSorts } from '../../config';
 import { Direction } from '../../enums/common.enum';
+import { PetLocation, PetStatus, PetType } from '../../enums/pet.enum';
 
 @InputType()
 export class PetInput {
@@ -141,7 +141,7 @@ class PISearch {
 }
 
 @InputType()
-export class PropertiesInquiry {
+export class PetsInquiry {
 	@IsNotEmpty()
 	@Min(1)
 	@Field(() => Int)
@@ -173,7 +173,7 @@ export class APISearch {
 }
 
 @InputType()
-export class SellerPropertiesInquiry {
+export class SellerPetsInquiry {
 	@IsNotEmpty()
 	@Min(1)
 	@Field(() => Int)
@@ -210,7 +210,7 @@ class ALPISearch {
 }
 
 @InputType()
-export class AllPropertiesInquiry {
+export class AllPetsInquiry {
 	@IsNotEmpty()
 	@Min(1)
 	@Field(() => Int)

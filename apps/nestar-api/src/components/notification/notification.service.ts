@@ -57,13 +57,13 @@ export class NotificationService {
 				},
 				{
 					$lookup: {
-						from: 'properties',
-						localField: 'propertyId',
+						from: 'pets',
+						localField: 'petId',
 						foreignField: '_id',
-						as: 'propertyData',
+						as: 'petData',
 					},
 				},
-				{ $unwind: { path: '$propertyData', preserveNullAndEmptyArrays: true } },
+				{ $unwind: { path: '$petData', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
 						from: 'boardArticles',
@@ -95,7 +95,7 @@ export class NotificationService {
 		result.list = data[0].list.map((ele) => ({
 			...ele,
 			authorNick: ele.memberData.memberNick,
-			propertyTitle: ele.propertyTitle,
+			petTitle: ele.petTitle,
 			artticleTitle: ele.articleTitle,
 			commentContent: ele.commentContent,
 		}));

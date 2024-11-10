@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MemberModule } from './member/member.module';
-import { PropertyModule } from './property/property.module';
+import { PetModule } from './pet/pet.module';
 import { AuthModule } from './auth/auth.module';
 import { CommentModule } from './comment/comment.module';
 import { LikeModule } from './like/like.module';
@@ -15,7 +15,7 @@ import { FaqModule } from './faq/faq.module';
 	imports: [
 		MemberModule,
 		AuthModule,
-		PropertyModule,
+		PetModule,
 		BoardArticleModule,
 		LikeModule,
 		ViewModule,

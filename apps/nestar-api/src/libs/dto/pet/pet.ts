@@ -1,64 +1,64 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { PropertyLocation, PropertyStatus, PropertyType } from '../../enums/property.enum';
 import { ObjectId } from 'mongoose';
 import { Member, TotalCounter } from '../member/member';
 import { MeLiked } from '../like/like';
+import { PetLocation, PetStatus, PetType } from '../../enums/pet.enum';
 
 @ObjectType()
-export class Property {
+export class Pet {
 	@Field(() => String)
 	_id: ObjectId;
 
-	@Field(() => PropertyType)
-	propertyType: PropertyType;
+	@Field(() => PetType)
+	petType: PetType;
 
-	@Field(() => PropertyStatus)
-	propertyStatus: PropertyStatus;
+	@Field(() => PetStatus)
+	petStatus: PetStatus;
 
-	@Field(() => PropertyLocation)
-	propertyLocation: PropertyLocation;
-
-	@Field(() => String)
-	propertyAddress: string;
+	@Field(() => PetLocation)
+	petLocation: PetLocation;
 
 	@Field(() => String)
-	propertyTitle: string;
+	petAddress: string;
+
+	@Field(() => String)
+	petTitle: string;
 
 	@Field(() => Number)
-	propertyPrice: number;
+	petPrice: number;
 
 	@Field(() => Number)
-	propertySquare: number;
+	petWeight: number;
 
 	@Field(() => Int)
-	propertyBeds: number;
+	petHeight: number;
 
 	@Field(() => Int)
-	propertyRooms: number;
+	petAges: number;
 
 	@Field(() => Int)
-	propertyViews: number;
+	petViews: number;
 
 	@Field(() => Int)
-	propertyLikes: number;
+	petLikes: number;
 
 	@Field(() => String)
-	propertyComments: number;
+	petComments: number;
 
 	@Field(() => Int)
-	propertyRank: number;
+	petRank: number;
 
 	@Field(() => [String])
-	propertyImages: string;
+	petImages: string;
 
 	@Field(() => String, { nullable: true })
-	propertyDesc?: string;
+	petDesc?: string;
 
 	@Field(() => Boolean)
-	propertyBarter: boolean;
+	petSell: boolean;
 
 	@Field(() => Boolean)
-	propertyRent: boolean;
+	petAdoption: boolean;
 
 	@Field(() => String)
 	memberId: ObjectId;
@@ -70,7 +70,7 @@ export class Property {
 	deletedAt?: Date;
 
 	@Field(() => Date, { nullable: true })
-	constructedAt?: Date;
+	bornAt?: Date;
 
 	@Field(() => Date)
 	createdAt: Date;
@@ -88,9 +88,9 @@ export class Property {
 }
 
 @ObjectType()
-export class Properties {
-	@Field(() => [Property])
-	list: Property[];
+export class Pets {
+	@Field(() => [Pet])
+	list: Pet[];
 
 	@Field(() => [TotalCounter])
 	metaCounter: TotalCounter[];

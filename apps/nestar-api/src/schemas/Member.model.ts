@@ -46,7 +46,7 @@ const MemberSchema = new Schema(
 		memberDesc: {
 			type: String,
 		},
-		memberProperties: {
+		memberPets: {
 			type: Number,
 			default: 0,
 		},

@@ -3,20 +3,19 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId, Schema } from 'mongoose';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import {
-	AgentPropertiesInquiry,
-	AllPropertiesInquiry,
+	SellerPetsInquiry,
+	AllPetsInquiry,
 	OrdinaryInquiry,
-	PropertiesInquiry,
-	PropertyInput,
-} from '../../libs/dto/property/property.input';
+	PetsInquiry,
+	PetInput,
+} from '../../libs/dto/pet/pet.input';
 import { MemberService } from '../member/member.service';
-import { Properties, Property } from '../../libs/dto/property/property';
-import { PropertyStatus } from '../../libs/enums/property.enum';
+import { Pets, Pet } from '../../libs/dto/pet/pet';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import ViewService from '../view/view.service';
 import { StatisticModifier, T } from '../../libs/types/common';
 
-import { PropertyUpdate } from '../../libs/dto/property/property.update';
+import { PetUpdate } from '../../libs/dto/pet/pet.update';
 import * as moment from 'moment';
 import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import { LikeService } from '../like/like.service';
@@ -27,14 +26,15 @@ import { NotificationGroup, NotificationStatus, NotificationType } from '../../l
 import { NotificationService } from '../notification/notification.service';
 import { Member } from '../../libs/dto/member/member';
 import { MemberStatus } from '../../libs/enums/member.enum';
+import { PetStatus } from '../../libs/enums/pet.enum';
 
 @Injectable()
-export class PropertyService {
+export class PetService {
 	findById(commentRefId: Schema.Types.ObjectId) {
 		throw new Error('Method not implemented.');
 	}
 	constructor(
-		@InjectModel('Property') private readonly propertyModel: Model<Property>,
+		@InjectModel('Pet') private readonly petModel: Model<Pet>,
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		@Inject(forwardRef(() => MemberService)) private memberService: MemberService,
 		private viewService: ViewService,
@@ -42,55 +42,55 @@ export class PropertyService {
 		private notificationService: NotificationService,
 	) {}
 
-	public async createProperty(input: PropertyInput): Promise<Property> {
+	public async createPet(input: PetInput): Promise<Pet> {
 		try {
-			const result = await this.propertyModel.create(input);
-			await this.memberService.memberStatsEditor({ _id: result.memberId, targetKey: 'memberProperties', modifier: 1 });
+			const result = await this.petModel.create(input);
+			await this.memberService.memberStatsEditor({ _id: result.memberId, targetKey: 'memberPets', modifier: 1 });
 			return result;
 		} catch (err) {
-			console.log('Error on createProperty', err);
+			console.log('Error on createPet', err);
 			throw new BadRequestException(Message.CREATE_FAILED);
 		}
 	}
 
-	public async getProperty(memberId: ObjectId, propertyId: ObjectId): Promise<Property> {
+	public async getPet(memberId: ObjectId, petId: ObjectId): Promise<Pet> {
 		const search: T = {
-			_id: propertyId,
-			propertyStatus: PropertyStatus.ACTIVE,
+			_id: petId,
+			petStatus: PetStatus.ACTIVE,
 		};
 
-		const targetProperty: Property = await this.propertyModel.findOne(search).lean().exec();
-		if (!targetProperty) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		const targetPet: Pet = await this.petModel.findOne(search).lean().exec();
+		if (!targetPet) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		if (memberId) {
-			const viewInput = { memberId: memberId, viewRefId: propertyId, viewGroup: ViewGroup.PROPERTY };
+			const viewInput = { memberId: memberId, viewRefId: petId, viewGroup: ViewGroup.PROPERTY };
 			const newView = await this.viewService.recordView(viewInput);
 			if (newView) {
-				await this.propertyStatsEditor({ _id: propertyId, targetKey: 'propertyViews', modifier: 1 });
-				targetProperty.propertyViews++;
+				await this.petStatsEditor({ _id: petId, targetKey: 'petViews', modifier: 1 });
+				targetPet.petViews++;
 			}
 
 			lookupAuthMemberLiked(memberId);
-			const LikeInput = { memberId: memberId, likeRefId: propertyId, likeGroup: LikeGroup.MEMBER };
-			targetProperty.meLiked = await this.likeService.checlLikeExistence(LikeInput);
+			const LikeInput = { memberId: memberId, likeRefId: petId, likeGroup: LikeGroup.MEMBER };
+			targetPet.meLiked = await this.likeService.checlLikeExistence(LikeInput);
 		}
 
-		targetProperty.memberData = await this.memberService.getMember(null, targetProperty.memberId);
-		return targetProperty;
+		targetPet.memberData = await this.memberService.getMember(null, targetPet.memberId);
+		return targetPet;
 	}
 
-	public async updateProperty(memberId: ObjectId, input: PropertyUpdate): Promise<Property> {
-		let { propertyStatus, soldAt, deletedAt } = input;
+	public async updatePet(memberId: ObjectId, input: PetUpdate): Promise<Pet> {
+		let { petStatus, soldAt, deletedAt } = input;
 		const search: T = {
 			_id: input._id,
 			memberId: memberId,
-			propertyStatus: PropertyStatus.ACTIVE,
+			petStatus: PetStatus.ACTIVE,
 		};
 
-		if (propertyStatus === PropertyStatus.SOLD) soldAt = moment().toDate();
-		else if (propertyStatus === PropertyStatus.DELETE) deletedAt = moment().toDate();
+		if (petStatus === PetStatus.SOLD) soldAt = moment().toDate();
+		else if (petStatus === PetStatus.DELETE) deletedAt = moment().toDate();
 
-		const result = await this.propertyModel
+		const result = await this.petModel
 			.findOneAndUpdate(search, input, {
 				new: true,
 			})
@@ -100,7 +100,7 @@ export class PropertyService {
 		if (soldAt || deletedAt) {
 			await this.memberService.memberStatsEditor({
 				_id: memberId,
-				targetKey: 'memberProperties',
+				targetKey: 'memberPets',
 				modifier: -1,
 			});
 		}
@@ -108,14 +108,14 @@ export class PropertyService {
 		return result;
 	}
 
-	public async getProperties(memberId: ObjectId, input: PropertiesInquiry): Promise<Properties> {
-		const match: T = { propertyStatus: PropertyStatus.ACTIVE };
+	public async getPets(memberId: ObjectId, input: PetsInquiry): Promise<Pets> {
+		const match: T = { petStatus: PetStatus.ACTIVE };
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
 
 		this.shapeMatchQuery(match, input);
 		console.log('match', match);
 
-		const result = await this.propertyModel
+		const result = await this.petModel
 			.aggregate([
 				{ $match: match },
 				{ $sort: sort },
@@ -139,7 +139,7 @@ export class PropertyService {
 		return result[0];
 	}
 
-	private shapeMatchQuery(match: T, input: PropertiesInquiry): void {
+	private shapeMatchQuery(match: T, input: PetsInquiry): void {
 		const {
 			memberId,
 			locationList,
@@ -154,16 +154,16 @@ export class PropertyService {
 		} = input.search;
 
 		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
-		if (locationList && locationList.length) match.propertyLocation = { $in: locationList };
-		if (roomsList && roomsList.length) match.propertyRooms = { $in: roomsList };
-		if (bedsList && bedsList.length) match.propertyBeds = { $in: bedsList };
-		if (typeList && typeList.length) match.propertyType = { $in: typeList };
+		if (locationList && locationList.length) match.petLocation = { $in: locationList };
+		if (roomsList && roomsList.length) match.petAges = { $in: roomsList };
+		if (bedsList && bedsList.length) match.petHeight = { $in: bedsList };
+		if (typeList && typeList.length) match.petType = { $in: typeList };
 
-		if (pricesRange) match.propertyPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
+		if (pricesRange) match.petPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
 		if (periodsRange) match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end };
-		if (squaresRange) match.propertySquare = { $gte: squaresRange.start, $lte: squaresRange.end };
+		if (squaresRange) match.petWeight = { $gte: squaresRange.start, $lte: squaresRange.end };
 
-		if (text) match.propertyTitle = { $regex: new RegExp(text, 'i') };
+		if (text) match.petTitle = { $regex: new RegExp(text, 'i') };
 		if (options && options.length) {
 			match['$or'] = options.map((ele) => {
 				return { [ele]: true };
@@ -171,25 +171,25 @@ export class PropertyService {
 		}
 	}
 
-	public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Properties> {
-		return await this.likeService.getFavoriteProperties(memberId, input);
+	public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pets> {
+		return await this.likeService.getFavoritePets(memberId, input);
 	}
 
-	public async getVisited(memberId: ObjectId, input: OrdinaryInquiry): Promise<Properties> {
-		return await this.viewService.getVisitedProperties(memberId, input);
+	public async getVisited(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pets> {
+		return await this.viewService.getVisitedPets(memberId, input);
 	}
 
-	public async getAgentProperties(memberId: ObjectId, input: AgentPropertiesInquiry): Promise<Properties> {
-		const { propertyStatus } = input.search;
-		if (propertyStatus === PropertyStatus.DELETE) throw new BadRequestException(Message.NOT_ALLOWED_REQUEST);
+	public async getSellerPets(memberId: ObjectId, input: SellerPetsInquiry): Promise<Pets> {
+		const { petStatus } = input.search;
+		if (petStatus === PetStatus.DELETE) throw new BadRequestException(Message.NOT_ALLOWED_REQUEST);
 
 		const match: T = {
 			memberId: memberId,
-			propertyStatus: propertyStatus ?? { $ne: PropertyStatus.DELETE },
+			petStatus: petStatus ?? { $ne: PetStatus.DELETE },
 		};
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
 
-		const result = await this.propertyModel
+		const result = await this.petModel
 			.aggregate([
 				{ $match: match },
 				{ $sort: sort },
@@ -211,15 +211,15 @@ export class PropertyService {
 
 		return result[0];
 	}
-	public async getAllPropertiesByAdmin(input: AllPropertiesInquiry): Promise<Properties> {
-		const { propertyStatus, propertyLocationList } = input.search;
+	public async getAllPetsByAdmin(input: AllPetsInquiry): Promise<Pets> {
+		const { petStatus, petLocationList } = input.search;
 		const match: T = {};
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
 
-		if (propertyStatus) match.propertyStatus = propertyStatus;
-		if (propertyLocationList) match.propertyLocation = { $in: propertyLocationList };
+		if (petStatus) match.petStatus = petStatus;
+		if (petLocationList) match.petLocation = { $in: petLocationList };
 
-		const result = await this.propertyModel
+		const result = await this.petModel
 			.aggregate([
 				{ $match: match },
 				{ $sort: sort },
@@ -242,30 +242,30 @@ export class PropertyService {
 		return result[0];
 	}
 
-	public async updatePropertyByAdmin(input: PropertyUpdate): Promise<Property> {
-		const { _id, propertyStatus } = input;
+	public async updatePetByAdmin(input: PetUpdate): Promise<Pet> {
+		const { _id, petStatus } = input;
 
-		if (propertyStatus === PropertyStatus.SOLD) {
+		if (petStatus === PetStatus.SOLD) {
 			input.soldAt = moment().toDate();
-		} else if (propertyStatus === PropertyStatus.DELETE) {
+		} else if (petStatus === PetStatus.DELETE) {
 			input.deletedAt = moment().toDate();
 		}
 
 		const searchCriteria = {
 			_id: _id,
-			propertyStatus: PropertyStatus.ACTIVE,
+			petStatus: PetStatus.ACTIVE,
 		};
 
-		const result = await this.propertyModel.findOneAndUpdate(searchCriteria, input, { new: true });
+		const result = await this.petModel.findOneAndUpdate(searchCriteria, input, { new: true });
 
 		if (!result) {
 			throw new InternalServerErrorException(Message.UPDATE_FAILED);
 		}
 
-		if (propertyStatus === PropertyStatus.SOLD || propertyStatus === PropertyStatus.DELETE) {
+		if (petStatus === PetStatus.SOLD || petStatus === PetStatus.DELETE) {
 			await this.memberService.memberStatsEditor({
 				_id: result.memberId,
-				targetKey: 'memberProperties',
+				targetKey: 'memberPets',
 				modifier: -1,
 			});
 		}
@@ -273,12 +273,12 @@ export class PropertyService {
 		return result;
 	}
 
-	public async removePropertyByAdmin(propertyId: ObjectId): Promise<Property> {
+	public async removePetByAdmin(petId: ObjectId): Promise<Pet> {
 		const searchCriteria = {
-			_id: propertyId,
-			propertyStatus: PropertyStatus.DELETE,
+			_id: petId,
+			petStatus: PetStatus.DELETE,
 		};
-		const result = await this.propertyModel.findOneAndDelete(searchCriteria).exec();
+		const result = await this.petModel.findOneAndDelete(searchCriteria).exec();
 
 		if (!result) {
 			throw new InternalServerErrorException(Message.REMOVE_FAILED);
@@ -287,15 +287,13 @@ export class PropertyService {
 		return result;
 	}
 
-	public async propertyStatsEditor(input: StatisticModifier): Promise<Property> {
+	public async petStatsEditor(input: StatisticModifier): Promise<Pet> {
 		const { _id, targetKey, modifier } = input;
-		return await this.propertyModel.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
+		return await this.petModel.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
 	}
 
-	public async likeTargetProperty(memberId: ObjectId, likeRefId: ObjectId): Promise<Property> {
-		const target: Property = await this.propertyModel
-			.findOne({ _id: likeRefId, propertyStatus: PropertyStatus.ACTIVE })
-			.exec();
+	public async likeTargetPet(memberId: ObjectId, likeRefId: ObjectId): Promise<Pet> {
+		const target: Pet = await this.petModel.findOne({ _id: likeRefId, petStatus: PetStatus.ACTIVE }).exec();
 		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		const author: Member = await this.memberModel
@@ -319,18 +317,18 @@ export class PropertyService {
 				receiverId: target.memberId,
 				authorNick: author.memberNick,
 				notificationStatus: NotificationStatus.WAIT,
-				notificationDesc: 'New Like to your property',
+				notificationDesc: 'New Like to your pet',
 				notificationGroup: NotificationGroup.PROPERTY,
 				notificationType: NotificationType.LIKE,
-				notificationTitle: 'New Like to your property',
+				notificationTitle: 'New Like to your pet',
 				articleId: null,
-				propertyId: likeRefId,
-				propertyTitle: target.propertyTitle,
+				petId: likeRefId,
+				petTitle: target.petTitle,
 			};
 			await this.notificationService.createNotification(inputNotif);
 		}
 
-		const result = await this.propertyStatsEditor({ _id: likeRefId, targetKey: 'propertyLikes', modifier: modifier });
+		const result = await this.petStatsEditor({ _id: likeRefId, targetKey: 'petLikes', modifier: modifier });
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;
 	}

@@ -4,10 +4,10 @@ import { Model, ObjectId } from 'mongoose';
 import { ViewInput } from '../../libs/dto/view/view.input';
 import { T } from '../../libs/types/common';
 import { Injectable } from '@nestjs/common';
-import { Properties } from '../../libs/dto/property/property';
 import { lookupFavorite, lookupVisit } from '../../libs/config';
 import { ViewGroup } from '../../libs/enums/view.enum';
-import { OrdinaryInquiry } from '../../libs/dto/property/property.input';
+import { OrdinaryInquiry } from '../../libs/dto/pet/pet.input';
+import { Pets } from '../../libs/dto/pet/pet';
 
 @Injectable()
 export default class ViewService {
@@ -33,7 +33,7 @@ export default class ViewService {
 		return await this.viewModel.findOne(search).exec();
 	}
 
-	public async getVisitedProperties(memberId: ObjectId, input: OrdinaryInquiry): Promise<Properties> {
+	public async getVisitedPets(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pets> {
 		const { page, limit } = input;
 		const match: T = { viewGroup: ViewGroup.PROPERTY, memberId: memberId };
 
@@ -45,20 +45,20 @@ export default class ViewService {
 				{ $sort: { updatedAt: -1 } },
 				{
 					$lookup: {
-						from: 'properties',
+						from: 'pets',
 						localField: 'viewRefId',
 						foreignField: '_id',
-						as: 'visitedProperty',
+						as: 'visitedPet',
 					},
 				},
-				{ $unwind: '$visitedProperty' },
+				{ $unwind: '$visitedPet' },
 				{
 					$facet: {
 						list: [
 							{ $skip: (page - 1) * limit },
 							{ $limit: limit },
 							lookupVisit,
-							{ $unwind: '$visitedProperty.memberData' },
+							{ $unwind: '$visitedPet.memberData' },
 						],
 						metaCounter: [{ $count: 'total' }],
 					},
@@ -66,8 +66,8 @@ export default class ViewService {
 			])
 			.exec();
 		console.log('data', data);
-		const result: Properties = { list: [], metaCounter: data[0].metaCounter };
-		result.list = data[0].list.map((ele) => ele.visitedProperty);
+		const result: Pets = { list: [], metaCounter: data[0].metaCounter };
+		result.list = data[0].list.map((ele) => ele.visitedPet);
 		console.log('result', result);
 
 		return result;

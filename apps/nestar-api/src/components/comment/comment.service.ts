@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { MemberService } from '../member/member.service';
-import { PropertyService } from '../property/property.service';
+import { PetService } from '../pet/pet.service';
 import { BoardArticleService } from '../board-article/board-article.service';
 import { CommentInput, CommentsInquiry } from '../../libs/dto/comment/comment.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
@@ -12,11 +12,11 @@ import { CommentUpdate } from '../../libs/dto/comment/comment.update';
 import { T } from '../../libs/types/common';
 import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
-import { Property } from '../../libs/dto/property/property';
+import { Pet } from '../../libs/dto/pet/pet';
 import { BoardArticle } from '../../libs/dto/board-article/board-article';
 import { Member } from '../../libs/dto/member/member';
 import { NotifyMeInput } from '../../libs/dto/notifyme/notifyme.input';
-import { PropertyStatus } from '../../libs/enums/property.enum';
+import { PetStatus } from '../../libs/enums/pet.enum';
 import { NotificationService } from '../notification/notification.service';
 import { MemberStatus } from '../../libs/enums/member.enum';
 import { BoardArticleStatus } from '../../libs/enums/board-article.enum';
@@ -25,13 +25,13 @@ import { BoardArticleStatus } from '../../libs/enums/board-article.enum';
 export class CommentService {
 	constructor(
 		@InjectModel('Comment') private readonly commentModel: Model<Comment>,
-		@InjectModel('Property') private readonly propertyModel: Model<Property>,
-		@InjectModel('Property') private readonly memberModel: Model<Member>,
+		@InjectModel('Pet') private readonly petModel: Model<Pet>,
+		@InjectModel('Pet') private readonly memberModel: Model<Member>,
 
 		@InjectModel('BoardArticle') private readonly boardArticleModel: Model<BoardArticle>,
 
 		private readonly memberService: MemberService,
-		private readonly propertyService: PropertyService,
+		private readonly petService: PetService,
 		private readonly boardArticleService: BoardArticleService,
 		private readonly notificationService: NotificationService,
 	) {}
@@ -48,8 +48,8 @@ export class CommentService {
 			notificationGroup: NotificationGroup.PROPERTY,
 			commentContent: input.commentContent,
 			notificationType: NotificationType.COMMENT,
-			propertyId: null,
-			propertyTitle: '',
+			petId: null,
+			petTitle: '',
 		};
 
 		try {
@@ -60,23 +60,23 @@ export class CommentService {
 		}
 		switch (input.commentGroup) {
 			case CommentGroup.PROPERTY:
-				await this.propertyService.propertyStatsEditor({
+				await this.petService.petStatsEditor({
 					_id: input.commentRefId,
-					targetKey: 'propertyComments',
+					targetKey: 'petComments',
 					modifier: 1,
 				});
 
-				const getAgentProperty = await this.propertyService.getProperty(memberId, input.commentRefId);
-				const propertyNotif = {
+				const getSellerPet = await this.petService.getPet(memberId, input.commentRefId);
+				const petNotif = {
 					...inputNotif,
-					receiverId: getAgentProperty.memberId,
+					receiverId: getSellerPet.memberId,
 					notificationGroup: NotificationGroup.PROPERTY,
-					notificationTitle: 'Commented on your property',
-					propertyId: input.commentRefId,
-					propertyTitle: getAgentProperty.propertyTitle,
+					notificationTitle: 'Commented on your pet',
+					petId: input.commentRefId,
+					petTitle: getSellerPet.petTitle,
 				};
 
-				await this.notificationService.createNotification(propertyNotif);
+				await this.notificationService.createNotification(petNotif);
 
 				break;
 			case CommentGroup.ARTICLE:

@@ -8,7 +8,7 @@ import { MemberModule } from '../member/member.module';
 import { ViewModule } from '../view/view.module';
 import { LikeModule } from '../like/like.module';
 import { NotificationModule } from '../notification/notification.module';
-import { PropertyModule } from '../property/property.module';
+import { PetModule } from '../pet/pet.module';
 
 @Module({
 	imports: [
@@ -23,7 +23,7 @@ import { PropertyModule } from '../property/property.module';
 		ViewModule,
 		LikeModule,
 		NotificationModule,
-		PropertyModule,
+		PetModule,
 	],
 	providers: [BoardArticleResolver, BoardArticleService],
 	exports: [BoardArticleService, MongooseModule],

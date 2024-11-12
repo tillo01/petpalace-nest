@@ -19,7 +19,7 @@ registerEnumType(NoticeStatus, {
 });
 
 export enum NoticeType {
-	PROPERTY = 'PROPERTY',
+	PET = 'PET',
 	PAYMENT = 'PAYMENT',
 	FORBUYERS = 'FORBUYERS',
 	FORSELLERS = 'FORSELLERS',

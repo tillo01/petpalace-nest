@@ -79,7 +79,7 @@ export class PricesRange {
 }
 
 @InputType()
-export class SquaresRange {
+export class WeightsRange {
 	@Field(() => Int)
 	start: number;
 
@@ -112,11 +112,11 @@ class PISearch {
 
 	@IsOptional()
 	@Field(() => [Int], { nullable: true })
-	roomsList?: Number[];
+	heightsList?: Number[];
 
 	@IsOptional()
 	@Field(() => [Int], { nullable: true })
-	bedsList?: Number[];
+	agesList?: Number[];
 
 	@IsOptional()
 	@IsIn(availableOptions, { each: true })
@@ -132,8 +132,8 @@ class PISearch {
 	periodsRange?: PeriodsRange;
 
 	@IsOptional()
-	@Field(() => SquaresRange, { nullable: true })
-	squaresRange?: SquaresRange;
+	@Field(() => WeightsRange, { nullable: true })
+	weightRange?: WeightsRange;
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })

@@ -63,7 +63,7 @@ export class PetService {
 		if (!targetPet) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		if (memberId) {
-			const viewInput = { memberId: memberId, viewRefId: petId, viewGroup: ViewGroup.PROPERTY };
+			const viewInput = { memberId: memberId, viewRefId: petId, viewGroup: ViewGroup.PET };
 			const newView = await this.viewService.recordView(viewInput);
 			if (newView) {
 				await this.petStatsEditor({ _id: petId, targetKey: 'petViews', modifier: 1 });
@@ -143,25 +143,25 @@ export class PetService {
 		const {
 			memberId,
 			locationList,
-			roomsList,
-			bedsList,
+			heightsList,
+			agesList,
 			typeList,
 			periodsRange,
 			pricesRange,
-			squaresRange,
+			weightRange,
 			options,
 			text,
 		} = input.search;
 
 		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
 		if (locationList && locationList.length) match.petLocation = { $in: locationList };
-		if (roomsList && roomsList.length) match.petAges = { $in: roomsList };
-		if (bedsList && bedsList.length) match.petHeight = { $in: bedsList };
+		if (heightsList && heightsList.length) match.petAges = { $in: heightsList };
+		if (agesList && agesList.length) match.petHeight = { $in: agesList };
 		if (typeList && typeList.length) match.petType = { $in: typeList };
 
 		if (pricesRange) match.petPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
-		if (periodsRange) match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end };
-		if (squaresRange) match.petWeight = { $gte: squaresRange.start, $lte: squaresRange.end };
+		if (periodsRange) match.createdAt = { $gte: weightRange.start, $lte: weightRange.end };
+		if (weightRange) match.petWeight = { $gte: weightRange.start, $lte: weightRange.end };
 
 		if (text) match.petTitle = { $regex: new RegExp(text, 'i') };
 		if (options && options.length) {
@@ -306,7 +306,7 @@ export class PetService {
 		const input: LikeInput = {
 			memberId: memberId,
 			likeRefId: likeRefId,
-			likeGroup: LikeGroup.PROPERTY,
+			likeGroup: LikeGroup.PET,
 		};
 		// LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
@@ -318,7 +318,7 @@ export class PetService {
 				authorNick: author.memberNick,
 				notificationStatus: NotificationStatus.WAIT,
 				notificationDesc: 'New Like to your pet',
-				notificationGroup: NotificationGroup.PROPERTY,
+				notificationGroup: NotificationGroup.PET,
 				notificationType: NotificationType.LIKE,
 				notificationTitle: 'New Like to your pet',
 				articleId: null,

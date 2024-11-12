@@ -45,7 +45,7 @@ export class CommentService {
 			receiverId: null,
 			notificationStatus: NotificationStatus.WAIT,
 			notificationDesc: '',
-			notificationGroup: NotificationGroup.PROPERTY,
+			notificationGroup: NotificationGroup.PET,
 			commentContent: input.commentContent,
 			notificationType: NotificationType.COMMENT,
 			petId: null,
@@ -59,7 +59,7 @@ export class CommentService {
 			throw new BadRequestException(Message.CREATE_FAILED);
 		}
 		switch (input.commentGroup) {
-			case CommentGroup.PROPERTY:
+			case CommentGroup.PET:
 				await this.petService.petStatsEditor({
 					_id: input.commentRefId,
 					targetKey: 'petComments',
@@ -70,7 +70,7 @@ export class CommentService {
 				const petNotif = {
 					...inputNotif,
 					receiverId: getSellerPet.memberId,
-					notificationGroup: NotificationGroup.PROPERTY,
+					notificationGroup: NotificationGroup.PET,
 					notificationTitle: 'Commented on your pet',
 					petId: input.commentRefId,
 					petTitle: getSellerPet.petTitle,

@@ -50,7 +50,7 @@ export class LikeService {
 
 	public async getFavoritePets(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pets> {
 		const { page, limit } = input;
-		const match: T = { likeGroup: LikeGroup.PROPERTY, memberId: memberId };
+		const match: T = { likeGroup: LikeGroup.PET, memberId: memberId };
 
 		const data: T = await this.likeModel
 			.aggregate([

@@ -35,7 +35,7 @@ export default class ViewService {
 
 	public async getVisitedPets(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pets> {
 		const { page, limit } = input;
-		const match: T = { viewGroup: ViewGroup.PROPERTY, memberId: memberId };
+		const match: T = { viewGroup: ViewGroup.PET, memberId: memberId };
 
 		const data: T = await this.viewModel
 			.aggregate([

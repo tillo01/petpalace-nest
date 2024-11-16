@@ -32,7 +32,7 @@ export class FaqResolver {
 	@Query((returns) => FAQs)
 	public async getAllFaqQuestionsByAdmin(@Args('input') input: FAQInquiry): Promise<FAQs> {
 		console.log('Query getAllFaqQuestionsByAdmin');
-		return await this.faqService.getAllFaqQuestions(input);
+		return await this.faqService.getAllFaqQuestionsByAdmin(input);
 	}
 
 	@Roles(MemberType.ADMIN)

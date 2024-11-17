@@ -67,9 +67,10 @@ export class FaqService {
 
 	public async getAllFaqQuestions(input: FAQInquiry): Promise<FAQs> {
 		const { noticeStatus, categoryList, noticeType, text } = input.search;
-		const match: T = {};
+		const match: T = {
+			noticeStatus: noticeStatus ?? NoticeStatus.ACTIVE,
+		};
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
-		if (noticeStatus) match.noticeStatus = NoticeStatus.ACTIVE;
 		if (categoryList) match.categoryList = categoryList;
 		if (noticeType) match.noticeType = noticeType;
 		if (text) match.noticeTitle = { $regex: new RegExp(text, 'i') };

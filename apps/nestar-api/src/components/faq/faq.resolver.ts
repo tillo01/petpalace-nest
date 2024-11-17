@@ -55,7 +55,7 @@ export class FaqResolver {
 	}
 
 	@UseGuards(WithoutGuard)
-	@Query((returns) => FAQ)
+	@Mutation((returns) => FAQ)
 	public async getFaqQuestion(@Args('answerId') input: string, @AuthMember('_id') memberId: ObjectId): Promise<FAQ> {
 		console.log('Query getFaqQuestion');
 		const answerId = shapeIntoMongoObjectId(input);

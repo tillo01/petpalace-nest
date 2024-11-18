@@ -244,6 +244,7 @@ export class BoardArticleService {
 				authorNick: author.memberNick,
 				articleTitle: target.articleTitle,
 				notificationStatus: NotificationStatus.WAIT,
+				notificationTitle: 'New Like to your article',
 				notificationDesc: 'New Like to your article',
 				notificationGroup: NotificationGroup.ARTICLE,
 				notificationType: NotificationType.LIKE,

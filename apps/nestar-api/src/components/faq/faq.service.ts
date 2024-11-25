@@ -101,6 +101,8 @@ export class FaqService {
 			_id: answerId,
 			noticeStatus: NoticeStatus.ACTIVE,
 		};
+		// @ts-ignore
+
 		const targetQuestion: FAQ = await this.faqQuestionsModel.findOne(search).lean().exec();
 		if (!targetQuestion) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		if (memberId) {

@@ -58,7 +58,7 @@ export class PetService {
 			_id: petId,
 			petStatus: PetStatus.ACTIVE,
 		};
-
+		// @ts-ignore
 		const targetPet: Pet = await this.petModel.findOne(search).lean().exec();
 		if (!targetPet) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 

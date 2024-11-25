@@ -103,9 +103,13 @@ export class MemberService {
 			likeRefId: targetId,
 			likeGroup: LikeGroup.MEMBER,
 		};
+
+		// @ts-ignore
 		targetMember.meLiked = await this.likeService.checlLikeExistence(LikeInput);
 		// mew followed
+		// @ts-ignore
 		targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
+		// @ts-ignore
 
 		return targetMember;
 	}

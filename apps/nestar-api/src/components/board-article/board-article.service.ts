@@ -57,7 +57,7 @@ export class BoardArticleService {
 			_id: articleId,
 			articleStatus: BoardArticleStatus.ACTIVE,
 		};
-
+		// @ts-ignore
 		const targetBoardArticle: BoardArticle = await this.boardArticleModel.findOne(search).lean().exec();
 		if (!targetBoardArticle) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		if (memberId) {

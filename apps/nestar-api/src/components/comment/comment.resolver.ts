@@ -11,6 +11,7 @@ import { shapeIntoMongoObjectId } from '../../libs/config';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class CommentResolver {
@@ -37,7 +38,7 @@ export class CommentResolver {
 		return await this.commentService.updateComment(memberId, input);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(WithoutGuard)
 	@Query((returns) => Comments)
 	public async getComments(
 		@Args('input') input: CommentsInquiry,

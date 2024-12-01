@@ -12,6 +12,10 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { WithoutGuard } from '../auth/guards/without.guard';
+<<<<<<< HEAD
+=======
+
+>>>>>>> develop
 @Resolver()
 export class CommentResolver {
 	constructor(private readonly commentService: CommentService) {}

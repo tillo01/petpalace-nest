@@ -13,8 +13,8 @@ export class AuthGuard implements CanActivate {
 			const request = context.getArgByIndex(2).req;
 
 			const bearerToken = request.headers.authorization;
-			if (!bearerToken) {
-			}
+			if (!bearerToken) console.log('Bearor is not provided');
+			if (!bearerToken) throw new BadRequestException(Message.NOT_AUTHENTICATED);
 
 			const token = bearerToken.split(' ')[1],
 				authMember = await this.authService.verifyToken(token);

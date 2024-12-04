@@ -12,10 +12,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { WithoutGuard } from '../auth/guards/without.guard';
-<<<<<<< HEAD
-=======
 
->>>>>>> develop
 @Resolver()
 export class CommentResolver {
 	constructor(private readonly commentService: CommentService) {}
@@ -26,7 +23,7 @@ export class CommentResolver {
 		@Args('input') input: CommentInput,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Comment> {
-		console.log('Mutation: createComment', input);
+		console.log('Mutation: createCommnt', input);
 		return await this.commentService.createComment(memberId, input);
 	}
 
@@ -64,4 +61,3 @@ export class CommentResolver {
 		return await this.commentService.removeCommentByAdmin(commentId);
 	}
 }
-
